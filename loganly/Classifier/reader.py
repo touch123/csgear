@@ -1,17 +1,16 @@
 import ptn
 import os
 
-file_path = "qrcodetran.20190420"
 catalog = []
 
 
-def mk_catalog():
+def mk_catalog(file_path):
     with open(file_path, 'r', encoding='gb2312', errors='ignore') as file:
         line = file.readline()
         while line is not None and line != '':
             n = ptn.ID(line)
             if n:
-                # mk_file(n, line)
+                mk_file(n, line)
                 if n not in catalog:
                     # print("GET : " + line)
                     # print("POST : " + n)
@@ -19,7 +18,7 @@ def mk_catalog():
             else:
                 if len(catalog):
                     pass
-                    # mk_file(catalog[-1], line)
+                    mk_file(catalog[-1], line)
                     # print("写" + catalog[-1] + "的报文:" + line)
             line = file.readline()
 
@@ -42,6 +41,6 @@ def mk_file(num, content):
 
 
 if __name__ == '__main__':
-    mk_catalog()
+    mk_catalog("qrcodetran.20190420")
     print(catalog)
 # mk_file("12345", "[03:10:01 - 3546] : begin pack DE 4")
