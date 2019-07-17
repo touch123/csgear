@@ -1,12 +1,16 @@
+# -*- coding: utf-8 -*-
 import re
 
 # 预处理关键词
-key_words = ["szRrn", "RespCode", "MrchId", "TermId"]
+
+postran_key_words = {'MrchId': 'MrchId = \\[(.*?)\\]', 'TermId': 'TermId = \\[(.*?)\\]',
+                     'RespCode': 'RespCode = \\[(.*?)\\]', 'Amount': ' Amount =\\[(.*?)\\]',
+                     'szRrn': " szRrn=\\[(.*?)\\]"}
 
 
 # 添加关键词
 def add_key_words(string):
-    key_words.append(string)
+    postran_key_words.append(string)
 
 
 # 识别程序PID
@@ -98,9 +102,31 @@ def get_num(txt):
 
 # 预处理，整理好json格式入库
 def key_words_marching(txt):  # 识别key_words列表
-    for item in key_words:
+    for item in postran_key_words:
         if item in txt:
             pass
+
+
+def MrchId(txt):
+    reMrchId = ' MrchId = \\[(.*?)\\]'
+
+    rg = re.compile(reMrchId, re.IGNORECASE | re.DOTALL)
+    m = rg.search(txt)
+    if m:
+        sbraces1 = m.group(1)
+        return sbraces1
+    else:
+        return None
+
+
+def DIYSearch(rule, txt):
+    rg = re.compile(rule, re.IGNORECASE | re.DOTALL)
+    m = rg.search(txt)
+    if m:
+        result = m.group(1)
+        return result
+    else:
+        return None
 
 
 if __name__ == '__main__':
@@ -109,8 +135,12 @@ if __name__ == '__main__':
     txt3 = "[04:00:26 - 19524] [MoveRecord.cp   - 4428]: moveRecord start at[20190420]"  # QRcode格式测试
     txt4 = "01: 00 55 60 00 13 00 00 05 20 20 20 00 80 00 c1 00    [.U`.....   .....]"  # 报文头格式测试
     txt5 = "06: 56 37 01 c1 84 89 f1                               [V7.....]"  # 报文尾格式测试
-    print(message_tail(txt1))
-    print(message_tail(txt2))
-    print(message_tail(txt3))
-    print(message_tail(txt4))
-    print(message_tail(txt5))
+    txt6 = "MrchId-[09:19:19 - 5893] : MrchId = [103421180620131]"  # MrchId格式测试
+    txt7 = 'MrchId-[09:19:19 - 5893] : AbcMrchId=[]'
+    txt8 = 'TermId-[09:19:19 - 5893] : AbcTermId=[]'
+    print(MrchId(txt6))
+    print(MrchId(txt7))
+    print(MrchId(txt8))
+    print(get_num(txt6))
+    print(get_num(txt7))
+    print(get_num(txt8))
