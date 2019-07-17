@@ -1,6 +1,7 @@
-# -*- coding : utf-8
+# -*- coding: utf-8 -*-
 import ptn
 import os
+import codecs
 
 catalog = []
 
@@ -8,8 +9,8 @@ catalog = []
 def mk_catalog(file_path):
     count = 0
     old_present = 0
-    with open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
-        path = str("classified_" + log.name)
+    with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
+        path = str("log\\classified_" + log.name)
         mk_dir(path)
         lines = log.readlines()
         current_pid = 0
@@ -19,12 +20,12 @@ def mk_catalog(file_path):
             pid = ptn.ID(line)
             if pid:
                 if pid not in catalog:  # 不在源目录里面的新pid
-                    file = open(path + "\\" + pid, 'a+')  # 创建新文件
+                    file = codecs.open(path + "\\" + pid, 'a+', encoding='gb2312', errors='ignore')  # 创建新文件
                     catalog.append(pid)
 
                 if pid != current_pid:  # 当前的pid和连续的pid不一样
                     file.close()
-                    file = open(path + "\\" + pid, 'a+')
+                    file = codecs.open(path + "\\" + pid, 'a+', encoding='gb2312', errors='ignore')
                     file.write(line)
                 else:  # 连续的pid
                     file.write(line)
@@ -32,11 +33,9 @@ def mk_catalog(file_path):
             else:  # 数字开头的十六进制报文
                 if file:
                     file.write(line)
-                    if round(count / len(lines) * 100) != old_present:
-                        print("Classifing: " + str(log.name) + "...... " + str(round(count / len(lines) * 100)) + "%")
-                        old_present = round(count / len(lines) * 100)
-                    else:
-                        pass
+                    # if round(count / len(lines) * 100) != old_present*1.0:
+                    #    print("Classifing: " + str(log.name) + "...... " + str(round(count / len(lines) * 100)) + "%")
+                    #    old_present = round(count / len(lines) * 100)
 
         return catalog
 
@@ -44,14 +43,23 @@ def mk_catalog(file_path):
 def mk_dir(dir_path):
     is_exist = os.path.exists(dir_path)
     if not is_exist:
-        os.mkdir(dir_path)
+        os.makedirs(dir_path)
         print("📂 " + dir_path + " was created.")
         return True
     else:
         return False
 
 
+def file_name(file_dir):
+    for root, dirs, files in os.walk(file_dir):
+        pass
+    # print(root)  # 当前目录路径
+    # print(dirs)  # 当前路径下所有子目录
+    # print(files)  # 当前路径下所有非目录子文件
+    return files
+
+
 if __name__ == '__main__':
-    mk_catalog("qrcodetran.20190420")
-    mk_catalog("postran.20190116")
-    mk_catalog("mis_clt.20190116")
+    mk_catalog("log\\qrcodetran.20190420")
+    mk_catalog("log\\postran.20190116")
+    mk_catalog("log\\mis_clt.20190116")

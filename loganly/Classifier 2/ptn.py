@@ -5,7 +5,8 @@ import re
 
 postran_key_words = {'MrchId': 'MrchId = \\[(.*?)\\]', 'TermId': 'TermId = \\[(.*?)\\]',
                      'RespCode': 'RespCode = \\[(.*?)\\]', 'Amount': ' Amount =\\[(.*?)\\]',
-                     'szRrn': " szRrn=\\[(.*?)\\]"}
+                     'szRrn': ' szRrn=\\[(.*?)\\]',
+                     'TraceNo': "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"}
 
 
 # 添加关键词
@@ -53,7 +54,7 @@ def message_tail(txt):
     # txt = '01: 00 55 60 00 13 00 00 05 20 20 20 00 80 00 c1 00    [.U`.....   .....]'
 
     re1 = '.*?'  # Non-greedy match on filler
-    re2 = '(\\[.*?\\])'  # Square Braces 1
+    re2 = '(\\[.*\\])'  # Square Braces 1
 
     rg = re.compile(re1 + re2, re.IGNORECASE | re.DOTALL)
     m = rg.search(txt)
