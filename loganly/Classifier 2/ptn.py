@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
+# @Time : 2019/7/18 10:57
+# @Author : Max
+# @FileName: head.py
+# @IDE: PyCharm
 import re
 
-# 预处理关键词
-
+# postran预处理关键词
 postran_key_words = {'MrchId': 'MrchId = \\[(.*?)\\]', 'TermId': 'TermId = \\[(.*?)\\]',
                      'RespCode': 'RespCode = \\[(.*?)\\]', 'Amount': ' Amount =\\[(.*?)\\]',
-                     'szRrn': ' szRrn=\\[(.*?)\\]',
-                     'TraceNo': "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"}
+                     'Rrn': ' szRrn=\\[(.*?)\\]',
+                     'TraceNo': "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)",
+                     'CountNo': 'szCountNo=\\[(.*?)\\]'}
+
+qrcodetran_key_words = {'MrchId': 'MrchId:(*?)', 'TermId': 'TermId=\\[(.*?)\\]',
+                        'respcode': '"respcode":	"(*?)"', 'Amount': ' Amount =\\[(.*?)\\]',
+                        'Rrn': ' szRrn=\\[(.*?)\\]',
+                        'TraceNo': "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)",
+                        'CountNo': 'szCountNo=\\[(.*?)\\]'}
 
 
 # 添加关键词
@@ -108,6 +118,7 @@ def key_words_marching(txt):  # 识别key_words列表
             pass
 
 
+# 测试：识别MrchID
 def MrchId(txt):
     reMrchId = ' MrchId = \\[(.*?)\\]'
 
@@ -120,12 +131,30 @@ def MrchId(txt):
         return None
 
 
+# 自定义规则的正则搜索
 def DIYSearch(rule, txt):
     rg = re.compile(rule, re.IGNORECASE | re.DOTALL)
     m = rg.search(txt)
     if m:
         result = m.group(1)
         return result
+    else:
+        return None
+
+
+def FileDate(txt):
+    import re
+
+    txt = 'postran.20190116'
+
+    re1 = '.*?'  # Non-greedy match on filler
+    re2 = '((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3}))(?:[0]?[1-9]|[1][012])(?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])'  # YYYYMMDD 1
+
+    rg = re.compile(re1 + re2, re.IGNORECASE | re.DOTALL)
+    m = rg.search(txt)
+    if m:
+        yyyymmdd1 = m.group(1)
+        return yyyymmdd1
     else:
         return None
 
