@@ -1,10 +1,30 @@
 description:
   '根据pid进行日志文件归类的归档器'
-system:
-  mis_clt: D:/classified/mis_clt
-  postran: D:/classified/postran
-  qrcodetran: D:/classified/qrcodetran
-classified logs location:
-  - mis_clt.20190116: classified/mis/
-  - postran.20190116: classified/postran
-  - qrcodetran.20190420: classified/qrcodetran
+
+
+input:
+  - path: /home/bmp/log
+
+
+  - logtype:
+    - mis_clt
+    - postran
+    - qrcodetran
+    - qr_clt
+    - hoteltran
+    - hotel_clt
+
+  mis_clt:
+    re:
+
+
+  postran:
+    re:
+      rrn: "asdfsdfds"
+      countno: "alsdf"
+
+
+  output:
+    path:  /home/bmp/runtime/file
+    dbpath: /home/bmp/runtime/db.sqlite
+
