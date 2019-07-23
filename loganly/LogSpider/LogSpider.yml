@@ -1,0 +1,47 @@
+description:
+  '根据pid进行日志文件归类的归档器'
+
+
+input:
+  path: /home/bmp/log
+
+
+  logtype:
+    - mis_clt
+    - postran
+    - qrcodetran
+    - qr_clt
+    - hoteltran
+    - hotel_clt
+
+  mis_clt:
+    re:
+      Head: '^(\\d+): '
+      Tail: '.*?(\\[.*\\])'
+
+  postran:
+    re:
+      Rrn: ' szRrn=\[(.*?)\]'
+      CountNo: 'szCountNo=\[(.*?)\]'
+      MrchId: 'MrchId = \[(.*?)\]'
+      TermId: 'TermId = \[(.*?)\]'
+      Amount: ' Amount =\[(.*?)\]'
+      RespCode: 'RespCode = \[(.*?)\]'
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+
+  qrcodetran:
+    re:
+      MrchId: "MrchId = '(.*?)'"
+      TermId: 'TermId=\[(.*?)\]'
+      respcode: '\"respcode\":	\"(.*?)\",'
+      amount: '\"amount\":	\"(.*?)\"'
+      rrn: '"rrn":	"(.*?)"'
+      traceno: "\"abctraceno\":	\"(.*?)\""
+      countno: '\"countno\":	\"(.*?)\"'
+      orderid: '\"orderid\":	\"(.*?)\"'
+      auth_code: '\"auth_code\":	\"(.*?)\"'
+
+  output:
+    path:  /home/bmp/runtime/file
+    dbpath: /home/bmp/runtime/identifier.sqlite
+
