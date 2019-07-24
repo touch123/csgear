@@ -27,12 +27,12 @@ def classification(file_path):
             pid = Library.ID(line)
             if pid:
                 if pid not in catalog:  # 不在源目录里面的新pid
-                    file = codecs.open(path + "\\" + pid, 'a+', encoding='gb2312', errors='ignore')  # 创建新文件
+                    file = codecs.open(path + "/" + pid, 'a+', encoding='gb2312', errors='ignore')  # 创建新文件
                     catalog.append(pid)
 
                 if pid != current_pid:  # 当前的pid和连续的pid不一样
                     file.close()
-                    file = codecs.open(path + "\\" + pid, 'a+', encoding='gb2312', errors='ignore')
+                    file = codecs.open(path + "/" + pid, 'a+', encoding='gb2312', errors='ignore')
                     file.write(line)
                 else:  # 连续的pid
                     file.write(line)
@@ -53,7 +53,7 @@ def mk_dir(dir_path):
     is_exist = os.path.exists(dir_path)
     if not is_exist:
         os.makedirs(dir_path)
-        # print("📂 " + dir_path + " was created.")
+        print("📂 " + dir_path + " was created.")
         return True
     else:
         return False

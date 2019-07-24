@@ -37,7 +37,7 @@ def classifying(file_name):
     lists = Dealer.file_name(path + file_name)
     for item in lists:
         result = unpacking(path + file_name + "/" + item, FileName)
-        # h和文件名相关的自定义部分
+        # 和文件名相关的自定义部分
         result.append(('PID', item))
         result.append(('FileDate', FileDate))
         result.append(('path', path + file_name + "/" + item))
