@@ -7,13 +7,16 @@ import os
 import Configuration
 import unpacking
 import Dealer
+import sys
 
 
-def LogSpider(fileDate=None, logType=None):
+def LogSpider(fileDate=None, logType=Configuration.logType):
     fileList = []
     if fileDate:
         for item in file_names():
-            portion = os.path.splitext(item)  # 将文件名拆成名字和后缀
+            portion = os.path.splitext(item)
+
+            # 将文件名拆成名字和后缀
             if portion[0] in logType and portion[1] == '.' + fileDate:
                 fileList.append(portion)
                 # print Configuration.log_path + item
@@ -29,6 +32,8 @@ def LogSpider(fileDate=None, logType=None):
             result = unpacking.classifying("".join(tuple(name)))
             print result
 
+        # 可以返回json或则入库
+
 
 # 遍历文件下下的文件名
 def file_names(user_dir=Configuration.log_path):
@@ -41,4 +46,8 @@ def file_names(user_dir=Configuration.log_path):
 
 
 if __name__ == '__main__':
+    argv = sys.argv
+
+
+    argv.index(2)
     LogSpider('20190116', Configuration.logType)
