@@ -104,5 +104,6 @@ venv.bak/
 .mypy_cache/
 
 loganly/LogSpider/log/
+loganly/LogSpider/classified_log
 loganly/Classifier/
 loganly/Classifier 2/

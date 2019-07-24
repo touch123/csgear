@@ -1,9 +1,5 @@
-description:
-  '根据pid进行日志文件归类的归档器'
-
-
 input:
-  path: /home/bmp/log
+  path: 'C:/Users/heckn/Desktop/LogSpider/log/'
 
 
   logtype:
@@ -15,9 +11,14 @@ input:
     - hotel_clt
 
   mis_clt:
+    type: custom
+    part:
+      - write
+      - read
     re:
       Head: '^(\\d+): '
       Tail: '.*?(\\[.*\\])'
+
 
   postran:
     re:
@@ -41,7 +42,16 @@ input:
       orderid: '\"orderid\":	\"(.*?)\"'
       auth_code: '\"auth_code\":	\"(.*?)\"'
 
-  output:
-    path:  /home/bmp/runtime/file
-    dbpath: /home/bmp/runtime/identifier.sqlite
+  qr_clt:
+    re:
+
+  hotel_clt:
+    re:
+
+  hoteltran:
+    re:
+
+output:
+  path:  'C:/Users/heckn/Desktop/LogSpider/classified_log/'
+  dbpath: 'C:\\Users\\heckn\\Desktop\\LogSpider\\identifier.sqlite'
 

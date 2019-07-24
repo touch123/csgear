@@ -6,4 +6,5 @@
 from unpacking_8583 import *
 from unpacking_postran import *
 from unpacking_qrcode import *
+from unpacking_general import *
 from unpacking_mis import *
