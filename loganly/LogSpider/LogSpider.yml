@@ -1,7 +1,6 @@
 input:
   path: 'C:/Users/heckn/Desktop/LogSpider/log/'
 
-
   logtype:
     - mis_clt
     - postran
