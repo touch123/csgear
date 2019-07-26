@@ -1,0 +1,75 @@
+#!/bin/sh
+
+alias AWK=awk
+DB_ORG_NAME=$WORK_DIR/db.json
+
+function pick(){
+  app=$1
+  date=$2
+
+  echo "{ " >> $WORK_DIR/db.json
+  for logfile in $WORK_DIR/$app/output/$date-*.txt
+  do
+     echo "\"$logfile\" : {" >> $WORK_DIR/db.json
+     AWK -f pick.$app.awk $logfile >> $WORK_DIR/db.json
+     echo "}," >> $WORK_DIR/db.json
+     echo -n "."
+  done
+  echo '"":{}' >> $WORK_DIR/db.json  
+  echo "}" >> $WORK_DIR/db.json
+
+}
+
+
+date=$1
+
+datestr=`echo $date | tr  "," " " `	
+
+if [ "$datestr" == "$date" ]; then
+	begin_date=`echo $date | cut -d \: -f1`
+	end_date=`echo $date | cut -d \: -f2`
+
+        [[ ${#begin_date} -eq 4 ]] && begin_date="2019"$begin_date
+        [[ ${#end_date} -eq 4 ]] && end_date="2019"$end_date
+
+	[[ ${#begin_date} -ne 8 || ${#end_date} -ne 8 ]] && exit 1
+	[[ ! $begin_date || ! $end_date ]] && exit 1
+	date -d $begin_date +%Y%m%d || exit 1
+	date -d $end_date +%Y%m%d || exit 1
+
+	curdate=$begin_date
+	datestr=$curdate
+	while [ $curdate != $end_date ]
+	do
+	   curdate=`date -d "+1 day $curdate" +%Y%m%d`
+	   datestr="$datestr $curdate"
+	done
+else
+	firstdate=`echo $datestr | cut -d " " -f1`
+ 	if [ ${#firstdate} -eq 4 ] ; then
+		datestrbk=$datestr
+ 		datestr=""
+		for tdate in $datestrbk
+		do
+			datestr=$datestr" "`date +%Y`$tdate
+		done
+	fi
+
+	echo $datestr
+fi
+
+
+
+rm -f $WORK_DIR/db.json 
+
+for item in $SUBDIR
+do
+   for tdate in $datestr
+   do
+      pick $item $tdate
+      echo -n "."
+   done
+done
+
+echo 'pick end.'
+exit 0

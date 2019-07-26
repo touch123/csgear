@@ -1,0 +1,70 @@
+#!/bin/sh
+
+alias AWK=awk
+
+function split(){
+  app=$1
+  date=$2
+  
+  logfile=$LOG_DIR/$app/$app.$date
+  [ ! -e $logfile ] && echo "$logfile not exists!" 
+  AWK -f merge.awk $logfile | AWK -v date=${logfile##*.} -v outputdir=$WORK_DIR/$app/output -f split.awk 
+
+}
+
+
+
+
+date=$1
+
+datestr=`echo $date | tr  "," " " `	
+
+if [ "$datestr" == "$date" ]; then
+	begin_date=`echo $date | cut -d \: -f1`
+	end_date=`echo $date | cut -d \: -f2`
+
+
+        [[ ${#begin_date} -eq 4 ]] && begin_date=`date +%Y`$begin_date
+        [[ ${#end_date} -eq 4 ]] && end_date=`date +%Y`$end_date
+
+	[[ ${#begin_date} -ne 8 || ${#end_date} -ne 8 ]] && exit 1
+	[[ ! $begin_date || ! $end_date ]] && exit 1
+	date -d $begin_date +%Y%m%d || exit 1
+	date -d $end_date +%Y%m%d || exit 1
+
+	curdate=$begin_date
+	datestr=$curdate
+	while [ $curdate != $end_date ]
+	do
+	   curdate=`date -d "+1 day $curdate" +%Y%m%d`
+	   datestr="$datestr $curdate"
+	done
+
+else
+	firstdate=`echo $datestr | cut -d " " -f1`
+ 	if [ ${#firstdate} -eq 4 ] ; then
+		datestrbk=$datestr
+ 		datestr=""
+		for tdate in $datestrbk
+		do
+			datestr=$datestr" "`date +%Y`$tdate
+		done
+	fi
+
+	echo $datestr
+fi
+
+
+
+for item in $SUBDIR
+do
+	for tdate in $datestr
+        do
+	   find $WORK_DIR/$item/output -name "$tdate-*.txt" -exec rm -f {} \;  && split $item $tdate
+           echo -n "."
+        done
+done
+
+echo 'split end.'
+
+exit 0

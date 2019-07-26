@@ -1,0 +1,30 @@
+#!/bin/sh
+
+cat /dev/stdin | ./jq -c ' [.TransType, .CountNo, .RespCode, .Result, .FileName ]'
+
+
+function aa(){
+declare -a cmdresult
+i=0
+
+while read cmdresult[$i]
+do
+  echo ${cmdresult[$i]}
+  let i+=1
+done
+
+}
+
+function bb(){
+
+if [ $# -gt 0 ];then
+    exec 0<$1;    #将文件绑定到标准输入（0-标准输入 1-标准输出 3-标准错误），默认第一个参数是输入的文件；
+fi
+
+while read line
+do
+    echo $line;
+done<&0;    #从标准输入读取数据
+exec 0<&-   #关闭标准输出。（是否也意味着解除之前的文件绑定？？）
+}
+

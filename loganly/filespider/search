@@ -1,0 +1,4 @@
+#!/bin/sh
+  ./jq "$1" db.utf8.json
+
+  #./jq ".[] | select($1)" db.utf8.json
