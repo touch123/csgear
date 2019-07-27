@@ -1,0 +1,198 @@
+#!/bin/sh
+
+#shopt -s expand_aliases on
+alias AWK=awk 
+
+LOG_DIR=$HOME/shop/log
+WORK_DIR=$HOME/tmp
+DB_NAME=db.utf8.json
+DB_FILE=$WORK_DIR/$DB_NAME
+
+# TARGET="postran mis_clt qr_clt qrcodetran"
+TARGET="qrcodetran qr_clt postran mis_clt"
+
+# RANGE=20190501:20190504  ok
+# RANGE=0501:0504  ok
+# RANGE=01:04
+# RANGE=1:4
+# RANGE=1,2,3,6,8
+# RANGE=20190501,20190504  ok
+# RANGE=0501,0504  ok
+# RANGE=20190501
+
+
+
+# COMMANDS
+COMMNADS=(
+   db_standardizing     # ×ª»»Êý¾Ý¿âÎªutf8 ok
+   list_trans 		# ÁÐÊ¾½»Ò×Çé¿ö  ok
+   list_warning_trans 	# ÁÐÊ¾Òì³£½»Ò×  ok
+   list_error_trans 	# ÁÐÊ¾´íÎó½»Ò×  ok
+   search_by_rrn	# ¸ù¾Ý²Î¿¼ºÅËÑË÷ÒøÐÐ¿¨½»Ò×
+   search_by_termid	# ¸ù¾ÝÖÕ¶ËºÅËÑË÷ÒøÐÐ¿¨½»Ò×
+   search_by_authcode   # ¸ù¾ÝÊÚÈ¨ºÅËÑË÷ÌõÂë½»Ò×  ok
+   search_by_orderid	# ¸ù¾Ý¶©µ¥ºÅËÑË÷ÌõÂë½»Ò×  ok
+   search_by_amount	# ¸ù¾Ý½ð¶îËÑË÷ËùÓÐ½»Ò×    ok
+   db_standardizing	# ¸ù¾Ý´íÎóÐÅÏ¢ËÑË÷ËùÓÐ½»Ò×
+   search_by_4fields    # ¸ù¾ÝÖ¸¶¨ËÄÒªËØ×Ö¶Î²éÕÒÖØ¸´½»Ò× ok
+   list_warning_trans 	# ÏÔÊ¾ÌõÂë½»Ò×µÄ¹ØÁª½»Ò×
+   check_repeating_rrn 	# ²éÕÒRRNÖØ¸´µÄÇé¿ö ok
+   count_all            # Í³¼Æ½»Ò×±ÊÊý      ok
+   count_clt            # 
+
+)
+
+[[ -f .admin.conf ]]  && . ./.admin.conf 
+
+for item in $TARGET
+do
+   mkdir -p $WORK_DIR/$item/output
+done
+
+
+function db_standardizing(){
+  iconv -f gbk -t utf-8 -c $WORK_DIR/db.json -o $DB_FILE
+}
+
+function list_trans(){
+  ./jq -c '[.[]] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .result]  ' $DB_FILE
+}
+
+function list_warning_trans(){
+  ./jq -c '[.[] | select(.RespCode!="00") ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result]  ' $DB_FILE
+}
+
+function list_error_trans(){
+  ./jq -c '[.[] | select(.RespCode !="00" and .RespCode !="RB" and .RespCode !="NP" ) ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result]  ' $DB_FILE
+}
+
+function search_by_rrn(){
+  ./jq -c '[.[] | select(.rrn=="'$1'" ) ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result, .auth_code]  ' $DB_FILE
+}
+
+function search_by_termid(){
+  ./jq -c '[.[] | select(.TermId=="'$1'" ) ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result, .auth_code]  ' $DB_FILE
+}
+
+function search_by_authcode(){
+  ./jq -c '[.[] | select(.auth_code=="'$1'" ) ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result, .auth_code]  ' $DB_FILE
+}
+
+function search_by_orderid(){
+  ./jq -c '[.[] | select(.orderid=="'$1'" ) ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result, .auth_code, .orderid]  ' $DB_FILE
+}
+
+function search_by_amount(){
+  ./jq -c '[.[] | select(.amount=="'$1'" ) ] | sort_by(.TermId,.transtime)| .[] | [.transdate, .transtime, .TermId, .amount, .RespCode, .result ]  ' $DB_FILE
+}
+
+function search_by_4fields(){
+
+  #./jq -c '[.[]] | group_by(.TermId,.abcbatchno,.abctraceno,.abcvoucherno) |.[] | if length > 1 then [(.[0].TermId,.[0].abcbatchno,.[0].abctraceno,.[0].abcvoucherno,length)] else empty end' $DB_FILE
+  ./jq -c '[.[]] | group_by(.TermId,.AbcBatchNo,.AbcTraceNo,.AbcVoucherNo) |.[] | if length > 1 then [(.[0].TermId,.[0].AbcBatchNo,.[0].AbcTraceNo,.[0].AbcVoucherNo,length)] else empty end' $DB_FILE
+
+}
+
+function check_repeating_rrn(){ 
+  ./jq '[.[]] | group_by(.rrn) | map({rrn:.[0].rrn, total:length}) ' $DB_FILE
+}
+
+function count_qrclt(){
+
+  ./jq -c '[.[]] | group_by(.minute) |.[] | if length > 1 then [(.[0].minute,length)] else empty end' $DB_FILE
+
+}
+
+function list_fdtrans(){
+  #./jq -c '[.[] | select(.original!="M") ]| sort_by(.workid,.room,.transtime)| .[] | [.workid, .room, .original, .transtime, .termid, .pan, .amount, .respcode, .result ]  ' $DB_FILE
+
+  ./jq -c '[.[] | select(.pan=="370285002035664") ]| sort_by(.workid,.room,.transtime)| .[] | [.workid, .room, .original, .transtime, .termid, .pan, .amount, .respcode, .result ]  ' $DB_FILE
+}
+
+
+function count_all(){
+
+  ./jq '[.[]] | length ' $DB_FILE
+}
+
+
+function split(){
+  WORK_DIR=$WORK_DIR LOG_DIR=$LOG_DIR SUBDIR=$TARGET ./split $1 
+}
+
+function pick(){
+  WORK_DIR=$WORK_DIR LOG_DIR=$LOG_DIR SUBDIR=$TARGET ./pick $1
+  #db_standardizing
+}
+
+
+function init(){
+  [ $1 ] && RANGE=$1
+
+  WORK_DIR=$WORK_DIR LOG_DIR=$LOG_DIR SUBDIR=$TARGET ./split $RANGE  && \
+  WORK_DIR=$WORK_DIR LOG_DIR=$LOG_DIR SUBDIR=$TARGET ./pick $RANGE  && \
+  db_standardizing
+}
+
+function config(){
+  [ ! $1 ] && cat .admin.conf && exit 0
+
+  sed -i "/$1/d" .admin.conf
+
+  echo "$1=${@:2}" >> .admin.conf
+  cat .admin.conf
+}
+
+function list(){
+  list_trans
+}
+
+function count(){
+  count_all
+}
+
+function clean(){
+  rm -i $WORK_DIR/*
+}
+
+function custom(){
+  list_fdtrans
+}
+
+
+#list_error_trans
+#search_by_authcode 135520879830508802
+#search_by_orderid 11133502539900421905021242218378
+#search_by_amount 59.00
+#check_repeating_rrn
+
+#rm db.bond.json
+#./search "[.[] | .orderid] | unique | sort | .[] // empty " | ./bond
+
+##############################################################################
+function Usage(){
+    echo "Usage: ${MYSELF} [split|pick|list|count|clean]"
+    echo "Some commands and usages:"
+    echo -e "\t spilt: ²ð·ÖÎÄ¼þ[20190401:20190505] ..."
+    echo -e "\t pick: ÌáÈ¡¹Ø¼üÊý¾Ý..."
+    echo -e "\t init: ³õÊ¼»¯ý¾Ý..."
+    echo -e "\t clean:  Çå¿Õ¹¤×÷Ä¿Â¼"
+    exit 1
+}
+
+#echo $TARGET
+
+case "$1" in
+    config) shift && config $* ;;
+    init) shift && init $* ;;
+    split) shift && split $* ;;
+    pick) shift && pick $* ;;
+    list) shift && list $* ;;
+    count) shift && count $* ;;
+    clean) shift && clean $* ;;
+    custom) shift && custom $* ;;
+    *) Usage ;;
+esac
+
+exit 0
+

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+function bond(){
+  #./jq '. as $obj | .[] | select(.Rrn=="'$1'") + {ref: $obj | [with_entries(.value += {parent:.key})[] | select(.Rrn=="'$1'").parent]}' db.utf8.json
+
+  #./jq '. as $obj | .[] | select(.Rrn=="'$1'") + {ref: $obj | [.[] | select(.Rrn=="'$1'").FileName]} ' db.utf8.json 
+
+  #./jq '. as $obj | [.[] |  select(.Rrn=="'$1'")] | sort_by(.FileName) ' db.utf8.json 
+
+  ./jq '. as $obj | [.[] |'\
+' select(.orderid=="'$1'")] |'\
+' sort_by(.FileName) | .[] |'\
+' "-------------------", .AbcBatchNo, .AbcVoucherNo, .AbcTraceNo, .TermId, .result '\
+ db.utf8.json 
+
+#' if length >1 then . else empty end |'\
+#' "-------------------", .auth_code, .TermId, .TransName, .amount, .countno, .result '\
+
+
+}
+
+
+if [ $# -gt 0 ]; then
+	for item in "$*"; do
+		bond $item
+	done
+else
+
+	echo "read txt from pipe or input."
+
+	declare -a pipein
+	i=0
+	while read pipein[$i]
+	do
+	  txt=`echo ${pipein[$i]} | tr -d '"'`
+	  #echo $txt
+	  bond $txt | tee -a  db.bond.json
+ 	  echo "-----------------------------------------------"
+	  let i+=1
+	done
+fi
+

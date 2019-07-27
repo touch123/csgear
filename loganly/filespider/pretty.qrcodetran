@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cat /dev/stdin | ./jq -c ' [.TransType, .order_id, .CountNo, .RespCode, .Result ]'
+
+
