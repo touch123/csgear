@@ -8,12 +8,10 @@ import os
 import codecs
 import Configuration
 
-catalog = []
-
 
 # 读取log的pid并拆分
 def classification(file_path):
-    count = 0
+    catalog = []
     # old_present = 0 打印进度条
     with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
         name = os.path.basename(log.name)
@@ -23,7 +21,6 @@ def classification(file_path):
         current_pid = 0
         file = None
         for line in lines:
-            count += 1
             pid = Library.ID(line)
             if pid:
                 if pid not in catalog:  # 不在源目录里面的新pid
@@ -44,7 +41,8 @@ def classification(file_path):
                     # if round(count / len(lines) * 100) != old_present*1.0:
                     #    print("Classifing: " + str(log.name) + "...... " + str(round(count / len(lines) * 100)) + "%")
                     #    old_present = round(count / len(lines) * 100)
-
+        print "NOTICE: distributed " + str(os.path.split(file_path)[1]) + ' into ' + str(
+            len(catalog)) + ' file base on the PID.'
         return catalog
 
 
@@ -53,7 +51,7 @@ def mk_dir(dir_path):
     is_exist = os.path.exists(dir_path)
     if not is_exist:
         os.makedirs(dir_path)
-        print("📂 " + dir_path + " was created.")
+        print("NOTICE: folder " + dir_path + " was created.")
         return True
     else:
         return False
@@ -66,21 +64,6 @@ def file_name(user_dir):
             file_list.append(file)
             # file_list.append(os.path.join(root, file))
     return file_list
-
-
-def main(fileDate, logtype):
-    # 读取配置文件到全局变量
-    pass
-
-    if fileDate:
-        pass
-    # 如果fileDate不为空
-    # 执行fileDate, logtype 的处理
-    # 执行logtype
-    else:
-        # 如果fileDate 为空
-        # 从sign表中取数据执行
-        pass
 
 
 if __name__ == '__main__':

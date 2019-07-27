@@ -7,19 +7,24 @@ import os
 import Configuration
 import unpacking
 import Dealer
-import sys
+import DBMS
 
 
 def LogSpider(fileDate=None, logType=Configuration.logType):
+    # 将文件名拆成名字和后缀
     fileList = []
+    DBMS.init()
     if fileDate:
-        for item in file_names():
+        for item in file_names(Configuration.log_path):
             portion = os.path.splitext(item)
-
-            # 将文件名拆成名字和后缀
             if portion[0] in logType and portion[1] == '.' + fileDate:
                 fileList.append(portion)
-                # print Configuration.log_path + item
+                Dealer.classification(Configuration.log_path + '/' + item)
+    else:
+        for item in file_names(Configuration.log_path):
+            portion = os.path.splitext(item)
+            if portion[0] in logType:
+                fileList.append(portion)
                 Dealer.classification(Configuration.log_path + '/' + item)
 
     # 关键字提取
@@ -27,16 +32,18 @@ def LogSpider(fileDate=None, logType=Configuration.logType):
         if name[0] in Configuration.doc['input'] and 'type' in Configuration.doc['input'][name[0]]:
             if name[0] == 'mis_clt':
                 result = unpacking.classifying_mis("".join(tuple(name)))
-                print result
+                # print result
         else:
             result = unpacking.classifying("".join(tuple(name)))
-            print result
+            # print result
 
         # 可以返回json或则入库
+        DBMS.delete_table(name[0])
+        DBMS.insert_dict_into_sql(name[0], result)
 
 
 # 遍历文件下下的文件名
-def file_names(user_dir=Configuration.log_path):
+def file_names(user_dir):
     file_list = list()
     for root, dirs, files in os.walk(user_dir):
         for file in files:
@@ -46,8 +53,7 @@ def file_names(user_dir=Configuration.log_path):
 
 
 if __name__ == '__main__':
-    argv = sys.argv
+    Configuration.init()
 
-
-    argv.index(2)
-    LogSpider('20190116', Configuration.logType)
+    # argv.index(2)
+    LogSpider(logType=Configuration.logType)

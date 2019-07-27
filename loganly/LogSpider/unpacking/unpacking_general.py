@@ -8,6 +8,7 @@ import Library
 import Dealer
 import codecs
 import Configuration
+import pprint
 
 
 # 解析关键词列表
@@ -47,4 +48,5 @@ def classifying(file_name):
 
 
 if __name__ == '__main__':
-    print classifying('qrcodetran.20190420')
+    Configuration.init()
+    pprint.pprint(classifying('qrcodetran.20190116'))
