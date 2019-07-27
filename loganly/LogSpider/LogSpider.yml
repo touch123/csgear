@@ -1,5 +1,5 @@
 input:
-  path: 'C:/Users/heckn/Desktop/LogSpider/log/'
+  path: 'log/'
 
   logtype:
     - mis_clt
@@ -8,6 +8,7 @@ input:
     - qr_clt
     - hoteltran
     - hotel_clt
+    - ictran
 
   mis_clt:
     type: custom
@@ -20,6 +21,16 @@ input:
 
 
   postran:
+    re:
+      Rrn: ' szRrn=\[(.*?)\]'
+      CountNo: 'szCountNo=\[(.*?)\]'
+      MrchId: 'MrchId = \[(.*?)\]'
+      TermId: 'TermId = \[(.*?)\]'
+      Amount: ' Amount =\[(.*?)\]'
+      RespCode: 'RespCode = \[(.*?)\]'
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+
+  ictran:
     re:
       Rrn: ' szRrn=\[(.*?)\]'
       CountNo: 'szCountNo=\[(.*?)\]'
@@ -51,6 +62,6 @@ input:
     re:
 
 output:
-  path:  'C:/Users/heckn/Desktop/LogSpider/classified_log/'
-  dbpath: 'C:\\Users\\heckn\\Desktop\\LogSpider\\identifier.sqlite'
+  path:  'classified_log/'
+  dbpath: 'identifier.sqlite'
 

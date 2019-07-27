@@ -52,7 +52,7 @@ def unpacking_mis(file_path):
                         # print("R:" + line)
                         reads += str(get_pure_8583(Library.message_head(line) + ": ", Library.message_tail(line),
                                                    line)).split(" ")
-    # return str_write, str_reads
+    return str_write, str_reads
 
 
 # 添加自定义关键词进返回的字典中

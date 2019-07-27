@@ -7,24 +7,25 @@ import os
 import Configuration
 import unpacking
 import Dealer
-import sys
 import DBMS
 
 
 def LogSpider(fileDate=None, logType=Configuration.logType):
+    # 将文件名拆成名字和后缀
     fileList = []
     DBMS.init()
     if fileDate:
         for item in file_names(Configuration.log_path):
             portion = os.path.splitext(item)
-
-            # 将文件名拆成名字和后缀
             if portion[0] in logType and portion[1] == '.' + fileDate:
                 fileList.append(portion)
-                print Configuration.log_path + item
                 Dealer.classification(Configuration.log_path + '/' + item)
     else:
-        pass
+        for item in file_names(Configuration.log_path):
+            portion = os.path.splitext(item)
+            if portion[0] in logType:
+                fileList.append(portion)
+                Dealer.classification(Configuration.log_path + '/' + item)
 
     # 关键字提取
     for name in fileList:
@@ -55,4 +56,4 @@ if __name__ == '__main__':
     Configuration.init()
 
     # argv.index(2)
-    LogSpider('20190116', Configuration.logType)
+    LogSpider(logType=Configuration.logType)

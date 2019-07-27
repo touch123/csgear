@@ -4,15 +4,17 @@
 # @FileName: head.py
 # @IDE: PyCharm
 import sqlite3
-import unpacking
 import Configuration
 
-conn = sqlite3.connect("identifier.sqlite")
+# Configuration.init()
+conn = sqlite3.connect(str(Configuration.db_path))
 c = conn.cursor()
 
 
 def init():
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
+              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
+    c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS sign (logType TEXT, FileDate TEXT, Status BOOLEAN)')
     c.execute('CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT)')
@@ -43,10 +45,12 @@ def delet_old_sign(logType, fileDate=None):
 
 
 def insert_dict_into_sql(logtype, dicts):
+
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
         c.execute(insert_str, values)
+    print "NOTICE: for total " + str(len(dicts)) + " files' values has been added into table " + logtype + " in database."
 
 
 def sign(fileDate, logType):
@@ -58,14 +62,23 @@ def skip(logType, FileDate):
     return c.fetchall()
 
 
-def run(command):
+def sreach(command):
     c.execute(command)
+    result = []
+    for item in c.fetchall():
+        result.append(item[1])
+    return result
 
 
 def logout():
     conn.commit()
     c.close()
     conn.close()
+
+
+def getTable(logType):
+    c.execute('PRAGMA table_info([%s])' % logType)
+    return c.fetchall()
 
 
 if __name__ == '__main__':
@@ -76,10 +89,3 @@ if __name__ == '__main__':
     # insert_dict_into_sql('mis_clt', unpacking.classifying_mis('mis_clt.20190116'))
     # insert_dict_into_sql('qrcodetran', unpacking.classifying('qrcodetran.20190116'))
     logout()
-
-
-# cur = conn.cursor()
-#     c.execute("SELECT * FROM sign WHERE logType=? and FileDate"% (logType, FileDate))
-#     rows = c.fetchall()
-#     for row in rows:
-#         print(row)
