@@ -1,0 +1,67 @@
+input:
+  path: 'D:/log/'
+
+  logtype:
+    - mis_clt
+    - postran
+    - qrcodetran
+    - qr_clt
+    - hoteltran
+    - hotel_clt
+    - ictran
+
+  mis_clt:
+    type: custom
+    part:
+      - write
+      - read
+    re:
+      Head: '^(\\d+): '
+      Tail: '.*?(\\[.*\\])'
+
+
+  postran:
+    re:
+      Rrn: ' szRrn=\[(.*?)\]'
+      CountNo: 'szCountNo=\[(.*?)\]'
+      MrchId: 'MrchId = \[(.*?)\]'
+      TermId: 'TermId = \[(.*?)\]'
+      Amount: ' Amount =\[(.*?)\]'
+      RespCode: 'RespCode = \[(.*?)\]'
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+
+  ictran:
+    re:
+      Rrn: ' szRrn=\[(.*?)\]'
+      CountNo: 'szCountNo=\[(.*?)\]'
+      MrchId: 'MrchId = \[(.*?)\]'
+      TermId: 'TermId = \[(.*?)\]'
+      Amount: ' Amount =\[(.*?)\]'
+      RespCode: 'RespCode = \[(.*?)\]'
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+
+  qrcodetran:
+    re:
+      MrchId: "MrchId = '(.*?)'"
+      TermId: 'TermId=\[(.*?)\]'
+      respcode: '\"respcode\":	\"(.*?)\",'
+      amount: '\"amount\":	\"(.*?)\"'
+      rrn: '"rrn":	"(.*?)"'
+      traceno: "\"abctraceno\":	\"(.*?)\""
+      countno: '\"countno\":	\"(.*?)\"'
+      orderid: '\"orderid\":	\"(.*?)\"'
+      auth_code: '\"auth_code\":	\"(.*?)\"'
+
+  qr_clt:
+    re:
+
+  hotel_clt:
+    re:
+
+  hoteltran:
+    re:
+
+output:
+  path:  'D:/classified_log/'
+  dbpath: 'identifier.sqlite'
+

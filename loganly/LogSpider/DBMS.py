@@ -5,6 +5,7 @@
 # @IDE: PyCharm
 import sqlite3
 import Configuration
+import pprint
 
 # Configuration.init()
 conn = sqlite3.connect(str(Configuration.db_path))
@@ -12,6 +13,7 @@ c = conn.cursor()
 
 
 def init():
+    print "NOTICE: Initialize database"
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
@@ -45,12 +47,15 @@ def delet_old_sign(logType, fileDate=None):
 
 
 def insert_dict_into_sql(logtype, dicts):
-
+    # pprint.pprint(logtype)
+    # pprint.pprint(dicts)
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
+
         c.execute(insert_str, values)
-    print "NOTICE: for total " + str(len(dicts)) + " files' values has been added into table " + logtype + " in database."
+    print "NOTICE: for total " + str(
+        len(dicts)) + " files values has been added into table " + logtype + " in database."
 
 
 def sign(fileDate, logType):
@@ -62,7 +67,7 @@ def skip(logType, FileDate):
     return c.fetchall()
 
 
-def sreach(command):
+def search(command):
     c.execute(command)
     result = []
     for item in c.fetchall():
@@ -74,6 +79,7 @@ def logout():
     conn.commit()
     c.close()
     conn.close()
+    print "NOTICE: database logout"
 
 
 def getTable(logType):
