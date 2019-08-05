@@ -107,3 +107,5 @@ loganly/LogSpider/log/
 loganly/LogSpider/classified_log
 loganly/Classifier/
 loganly/Classifier 2/
+
+.pyc

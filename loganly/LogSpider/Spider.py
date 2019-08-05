@@ -18,13 +18,13 @@ def Spider(fileDate=None, logType=Configuration.logType):
     if logType is str:
         logType = [logType]
 
-    for type in logType:
+    for t in logType:
         if fileDate:
-            if os.path.isfile(Configuration.log_path + type + '/' + type + '.' + fileDate):
-                Dealer.classification(Configuration.log_path + type + '/' + type + '.' + fileDate)
-                fileList.append((type, '.' + fileDate))
+            if os.path.isfile(Configuration.log_path + t + '/' + t + '.' + fileDate):
+                Dealer.classification(Configuration.log_path + t + '/' + t + '.' + fileDate)
+                fileList.append((t, '.' + fileDate))
             else:
-                print "ERROR: file " + Configuration.log_path + type + '/' + type + '.' + fileDate + " don't exist."
+                print "ERROR: file " + Configuration.log_path + t + '/' + t + '.' + fileDate + " don't exist."
 
     # 关键字提取
     for name in fileList:
