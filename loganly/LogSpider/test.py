@@ -10,16 +10,21 @@ from optparse import OptionParser
 def main():
     parser = OptionParser(usage="usage: %prog [options] filename",
                           version="%prog 1.0")
-    parser.add_option("-x", "--xhtml",
+    parser.add_option("-e", "--environment",
                       action="store_true",
-                      dest="xhtml_flag",
+                      dest="environment",
+                      default="linux",
+                      help=u"通过配置文件在Windows和Linux环境之间切换", )
+    parser.add_option("-d", "--date",
+                      action="store_true",
+                      dest="FileDate",
                       default=False,
-                      help="create a XHTML template instead of HTML")
-    parser.add_option("-c", "--cssfile",
-                      action="store",  # optional because action defaults to "store"
-                      dest="cssfile",
-                      default="style.css",
-                      help="CSS file to link", )
+                      help=u"指定Spider处理的日志的日期范围")
+    parser.add_option("-t", "--type",
+                      action="store_true",  # optional because action defaults to "store"
+                      dest="LogType",
+                      default=False,
+                      help=u"指定Spider处理的日志的类型", )
     (options, args) = parser.parse_args()
 
     if len(args) != 1:

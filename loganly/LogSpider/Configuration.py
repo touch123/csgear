@@ -18,10 +18,11 @@ db_path = None
 
 
 # 初始化关键词列表
-def init():
+def init(fileName = 'LogSpider.yml'):
+    print "NOTICE: Initialize Configuration"
     global doc, logType, postran_key_words, qrcodetran_key_words, log_path, classified_path, db_path
     try:
-        with codecs.open('LogSpider.yml', 'r', errors='ignore') as file:
+        with codecs.open(fileName, 'r', errors='ignore') as file:
             doc = yaml.safe_load(file)
             logType = doc['input']['logtype']
             postran_key_words = doc['input']['postran']['re']
@@ -51,6 +52,8 @@ def self_check():
     if not os.path.isfile(db_path):
         print 'ERROR: database path ' + db_path + "doesn't exist."
         exit()
+
+    print "NOTICE: Configuration check ------ GOOD "
 
 
 if __name__ == '__main__':

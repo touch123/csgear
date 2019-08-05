@@ -8,24 +8,43 @@ import Configuration
 import unpacking
 import Dealer
 import DBMS
+from optparse import OptionParser
+
+parser = OptionParser(usage="usage: %prog [options] filename",
+                      version="%prog 1.0")
+parser.add_option("-c", "--comfig",
+                  action="store",
+                  dest="config",
+                  default="LogSpider.yml",
+                  help=u"指定配置文件名", )
+parser.add_option("-d", "--date",
+                  action="store_true",
+                  dest="FileDate",
+                  default=False,
+                  help=u"指定Spider处理的日志的日期范围")
+parser.add_option("-t", "--type",
+                  action="store_true",  # optional because action defaults to "store"
+                  dest="LogType",
+                  default=False,
+                  help=u"指定Spider处理的日志的类型", )
+(options, args) = parser.parse_args()
 
 
 def Spider(fileDate=None, logType=Configuration.logType):
     # 将文件名拆成名字和后缀
     fileList = []
-    DBMS.init()
-    if fileDate:
-        for item in file_names(Configuration.log_path):
-            portion = os.path.splitext(item)
-            if portion[0] in logType and portion[1] == '.' + fileDate:
-                fileList.append(portion)
-                Dealer.classification(Configuration.log_path + '/' + item)
-    else:
-        for item in file_names(Configuration.log_path):
-            portion = os.path.splitext(item)
-            if portion[0] in logType:
-                fileList.append(portion)
-                Dealer.classification(Configuration.log_path + '/' + item)
+
+    for type in logType:
+        if fileDate:
+            if os.path.isfile(Configuration.log_path + '/' + type + '/' + type + '.' + fileDate):
+                Dealer.classification(Configuration.log_path + '/' + type + '/' + type + '.' + fileDate)
+                fileList.append((type, fileDate))
+            else:
+                print "ERROR: file" + Configuration.log_path + '/' + type + '/' + type + '.' + fileDate + " don't exist."
+        else:
+            for item in Configuration.log_path + '/' + type:
+                print item
+
 
     # 关键字提取
     for name in fileList:
@@ -53,7 +72,7 @@ def file_names(user_dir):
 
 
 if __name__ == '__main__':
-    Configuration.init()
+    Configuration.init(options.config)
     DBMS.init()
-    # argv.index(2)
     Spider(fileDate='20190116', logType=Configuration.logType)
+    DBMS.logout()
