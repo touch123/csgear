@@ -9,11 +9,14 @@ import Dealer
 import codecs
 import Configuration
 import pprint
+import os
 
 
 # 解析关键词列表
 def unpacking(file_path, type):
     result = []  # 空结果列表，采集完了再把列表变成字典
+    if not os.path.isfile(file_path):
+        print "WARNING: file " + file_path + " don't exist."
     with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
         words = list(Configuration.get_re(type))
         rules = list(Configuration.get_re(type).values())
