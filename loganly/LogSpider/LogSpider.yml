@@ -1,5 +1,5 @@
 input:
-  path: 'log/'
+  path: '/usr/src/log/'
 
   logtype:
     - mis_clt
@@ -62,6 +62,6 @@ input:
     re:
 
 output:
-  path:  'classified_log/'
+  path:  '/usr/src/classified_log/'
   dbpath: 'identifier.sqlite'
 
