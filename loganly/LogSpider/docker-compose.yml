@@ -1,17 +1,15 @@
-#指定Compose版本，目前有1/2/3三个版本
 version: '3'
 
 
 services:
 
   logspider:
-    #镜像名称
-    image: django:1.10.1-python
-    #端口映射
+    image: my.com:1333/chase/cmdsvr
     #ports:
     #  - 9000:9000
-    #目录/文件挂载
     volumes:
       - D:/LogSpider:/usr/src/app
-    command: /usr/src/app/LogSpider.py
+      - D:/log:/usr/src/log
+      - D:/classified_log:/usr/src/classified_log
+    command: python /usr/src/app/Spider.py
     #command: sh
