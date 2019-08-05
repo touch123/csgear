@@ -42,7 +42,7 @@ def classification(file_path):
                     #    print("Classifing: " + str(log.name) + "...... " + str(round(count / len(lines) * 100)) + "%")
                     #    old_present = round(count / len(lines) * 100)
         print "NOTICE: distributed " + str(os.path.split(file_path)[1]) + ' into ' + str(
-            len(catalog)) + ' file base on the PID.'
+            len(catalog)) + ' file base on the PID in path ' + str(path)
         return catalog
 
 

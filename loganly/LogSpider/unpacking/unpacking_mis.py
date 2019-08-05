@@ -8,9 +8,12 @@ import Dealer
 import codecs
 import unpacking_8583
 import Configuration
+import os
 
 
 def unpacking_mis(file_path):
+    if not os.path.isfile(file_path):
+        print "WARNING: file " + file_path + " don't exist."
     with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
         # 在读取完read和write之后用jion()方法合并字符串，然后去空格
         reads = []  # 空read报文容器
