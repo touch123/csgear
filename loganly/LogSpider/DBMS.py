@@ -10,7 +10,6 @@ import Configuration
 conn = sqlite3.connect(str(Configuration.db_path))
 c = conn.cursor()
 
-
 def init():
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
@@ -45,12 +44,13 @@ def delet_old_sign(logType, fileDate=None):
 
 
 def insert_dict_into_sql(logtype, dicts):
-
+    print logtype
+    print dicts
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
         c.execute(insert_str, values)
-    print "NOTICE: for total " + str(len(dicts)) + " files' values has been added into table " + logtype + " in database."
+    print "NOTICE: for total " + str(len(dicts)) + " files values has been added into table " + logtype + " in database."
 
 
 def sign(fileDate, logType):
@@ -62,7 +62,7 @@ def skip(logType, FileDate):
     return c.fetchall()
 
 
-def sreach(command):
+def search(command):
     c.execute(command)
     result = []
     for item in c.fetchall():
