@@ -1,5 +1,5 @@
 input:
-  path: '/usr/src/log/'
+  path: 'D:/log/'
 
   logtype:
     - mis_clt
@@ -62,11 +62,17 @@ input:
     re:
 
 output:
-  path:  '/usr/src/classified_log/'
+  path:  'D:/classified_log/'
   dbpath: 'identifier.sqlite'
+  finder: 'D:/output'
 
   filter:
     re:
       - 'Proc GetTermInfo End OK ...'
-
-
+      - 'GetTransType end ok...'
+      - 'GetTransType begin ...'
+      - 'GetTraceNo being ...'
+      - 'Proc CheckTermInfo End OK ...'
+      - 'Procp GetTermExtra Begin ...'
+      - 'unpack_POS8583 function OK!'
+      - 'Proc Abc_UnpackAbc End OK ...'

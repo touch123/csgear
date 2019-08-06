@@ -3,10 +3,39 @@
 # @Author : Max
 # @FileName: Filter.py
 # @IDE: PyCharm
+<<<<<<< Updated upstream
 
 
 def  Filter():
     pass
+=======
+import codecs
+import Configuration
+import re
+
+def Filter(d):
+    for item in d:
+        file_path = item["path"]
+        with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
+
+            # 修改&过滤
+            lines = log.readlines()
+            for line in lines:
+                # 过滤规则
+                for rule in Configuration.filters:
+                    if rule in line:
+                        lines.remove(line)
+                # 翻译规则
+                # highline 规则
+
+            # 写入
+            file = codecs.open(Configuration.finder, 'a+', encoding='gb2312', errors='ignore')
+            file.writelines(lines)
+
+        file.write("\n\n")
+        file.close()
+
+>>>>>>> Stashed changes
 
 if __name__ == '__main__':
     pass

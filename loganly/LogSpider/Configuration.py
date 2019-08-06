@@ -15,20 +15,38 @@ qrcodetran_key_words = None
 log_path = None
 classified_path = None
 db_path = None
+<<<<<<< Updated upstream
 
 
 # 初始化关键词列表
 def init():
     global doc, logType, postran_key_words, qrcodetran_key_words, log_path, classified_path, db_path
+=======
+finder = None
+filters = None
+
+
+# 初始化关键词列表
+def init(fileName = 'LogSpider.yml'):
+    print "NOTICE: Initialize Configuration"
+    global doc, logType, postran_key_words, qrcodetran_key_words, log_path, classified_path, db_path, finder, filters
+>>>>>>> Stashed changes
     try:
         with codecs.open('LogSpider.yml', 'r', errors='ignore') as file:
             doc = yaml.safe_load(file)
+            # pprint.pprint(doc)
             logType = doc['input']['logtype']
             postran_key_words = doc['input']['postran']['re']
             qrcodetran_key_words = doc['input']['qrcodetran']['re']
             log_path = doc['input']['path']
             classified_path = doc['output']['path']
             db_path = doc['output']['dbpath']
+<<<<<<< Updated upstream
+=======
+            finder = doc['output']['finder']
+            filters = doc['output']['filter']['re']
+
+>>>>>>> Stashed changes
     except IOError:
         print "ERROR: Configuration file not found."
         exit()
@@ -54,5 +72,5 @@ def self_check():
 
 
 if __name__ == '__main__':
-    init()
+    init('debug.yml')
     self_check()

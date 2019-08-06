@@ -50,5 +50,15 @@ def deal():
         pass
 
 if __name__ == '__main__':
+<<<<<<< Updated upstream
 
     Finder({'logType': 'mis_clt', 'FileDate': '20190116', 'TraceNo': '540002'})
+=======
+    Configuration.init('debug.yml')
+    DBMS.init()
+    result = Finder(
+        {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,
+         'MrchId': options.MrchId})
+    # result = Finder({'logType': 'postran', 'FileDate': '20190116'})
+    Filter.Filter(result)
+>>>>>>> Stashed changes
