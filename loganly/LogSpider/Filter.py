@@ -5,7 +5,7 @@
 # @IDE: PyCharm
 import codecs
 import Configuration
-
+import re
 
 def Filter(d):
     for item in d:
@@ -16,9 +16,11 @@ def Filter(d):
             lines = log.readlines()
             for line in lines:
                 # 过滤规则
+                for rule in Configuration.filters:
+                    if rule in line:
+                        lines.remove(line)
                 # 翻译规则
                 # highline 规则
-                pass
 
             # 写入
             file = codecs.open(Configuration.finder, 'a+', encoding='gb2312', errors='ignore')
