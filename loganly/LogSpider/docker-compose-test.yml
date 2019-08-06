@@ -1,0 +1,15 @@
+version: '3'
+
+
+services:
+
+  logspider:
+    image: my.com:1333/chase/cmdsvr
+    #ports:
+    #  - 9000:9000
+    volumes:
+      - /root/test/logspider/csgear/loganly/LogSpider:/usr/src/app
+      - /root/log:/usr/src/log
+      - /root/classified_log:/usr/src/classified_log
+    command: python Spider.py -d "20170216"
+    #command: sh
