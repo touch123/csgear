@@ -5,15 +5,24 @@
 # @IDE: PyCharm
 import sqlite3
 import Configuration
+import os
 import pprint
 
-# Configuration.init()
-conn = sqlite3.connect(str(Configuration.db_path))
-c = conn.cursor()
+conn = None
+c = None
 
 
+# 初始化数据库，创建并检查表
 def init():
-    print "NOTICE: Initialize database"
+    if not os.path.isfile(str(Configuration.db_path)):
+        print "ERROR: datebase " + str(Configuration.db_path) + " not found."
+        exit()
+    global conn, c
+    conn = sqlite3.connect(str(Configuration.db_path))
+    c = conn.cursor()
+    print "NOTICE: Initialize database " + str(Configuration.db_path)
+
+    # 创建表
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
@@ -30,7 +39,6 @@ def drop_table():
     tables = ['postran', 'mis_clt']
     for item in tables:
         c.execute('DROP TABLE  ' + item)
-    conn.commit()
 
 
 def delete_table(logtype, fileDate=None):
@@ -38,17 +46,18 @@ def delete_table(logtype, fileDate=None):
         c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logtype, fileDate))
     else:
         c.execute('DELETE FROM %s' % logtype)
-    conn.commit()
 
 
 def delet_old_sign(logType, fileDate=None):
     c.execute('DELETE FROM sign WHERE logType = "%s" and FileDate = "%s"' % (logType, fileDate))
-    conn.commit()
+
+
+def delet_old_data(logType, fileDate=None):
+    c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logType, fileDate))
 
 
 def insert_dict_into_sql(logtype, dicts):
-    # pprint.pprint(logtype)
-    # pprint.pprint(dicts)
+    delet_old_data(logtype, dicts[1]["FileDate"])
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
@@ -71,7 +80,7 @@ def search(command):
     c.execute(command)
     result = []
     for item in c.fetchall():
-        result.append(item[1])
+        result.append(item)
     return result
 
 
@@ -79,7 +88,7 @@ def logout():
     conn.commit()
     c.close()
     conn.close()
-    print "NOTICE: database logout"
+    print "NOTICE: logout database"
 
 
 def getTable(logType):
@@ -89,9 +98,4 @@ def getTable(logType):
 
 if __name__ == '__main__':
     init()
-    # Configuration.init()
-    # delete_table("qrcodetran")
-    # insert_dict_into_sql('postran', unpacking.classifying('postran.20190116'))
-    # insert_dict_into_sql('mis_clt', unpacking.classifying_mis('mis_clt.20190116'))
-    # insert_dict_into_sql('qrcodetran', unpacking.classifying('qrcodetran.20190116'))
     logout()

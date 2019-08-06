@@ -64,4 +64,5 @@ input:
 output:
   path:  '/usr/src/classified_log/'
   dbpath: 'identifier.sqlite'
+  finder: 'usr/src/output'
 

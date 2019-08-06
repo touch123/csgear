@@ -60,6 +60,9 @@ def getdate(beforeOfDay):
     return re_date
 
 
+# ---------------------------参数处理------------------------------
+
+
 parser = OptionParser(usage="usage: %prog [options] filename",
                       version="%prog 1.0")
 parser.add_option("-c", "--config",
@@ -75,7 +78,7 @@ parser.add_option("-d", "--date",
 parser.add_option("-t", "--type",
                   action="store",  # optional because action defaults to "store"
                   dest="LogType",
-                  default=['postran', 'mis_clt', 'qrcodetran'],
+                  default=['postran', 'mis_clt'],
                   help=u"指定Spider处理的日志的类型", )
 (options, args) = parser.parse_args()
 

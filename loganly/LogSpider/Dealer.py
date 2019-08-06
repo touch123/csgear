@@ -37,7 +37,7 @@ def classification(file_path):
             else:  # 数字开头的十六进制报文
                 if file:
                     file.write(line)
-                    # 打印进度条，python 2.7炸了不知道为啥
+                    # 打印进度条，python 2.7炸了不知道为啥不过反正都是在dockers里面跑也没人看呜呜呜
                     # if round(count / len(lines) * 100) != old_present*1.0:
                     #    print("Classifing: " + str(log.name) + "...... " + str(round(count / len(lines) * 100)) + "%")
                     #    old_present = round(count / len(lines) * 100)
@@ -78,6 +78,6 @@ if __name__ == '__main__':
     classification("log\\qr_clt.20190107")
 
     # 遍历刚刚生成的文件夹下面的文件
-    # *可选：多进程同时处理*
+    # *可选：多进程同时处理* 目前没必要
     # 运行unpacking程序进行解析的提取
     # 抽取的结果在unpacking里面直接入库

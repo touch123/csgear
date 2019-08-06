@@ -64,4 +64,5 @@ input:
 output:
   path:  'D:/classified_log/'
   dbpath: 'identifier.sqlite'
+  finder: 'D:/output'
 
