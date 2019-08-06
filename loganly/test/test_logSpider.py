@@ -1,10 +1,10 @@
 from unittest import TestCase
 
-import Configuration
-from LogSpider import LogSpider
+from LogSpider import Configuration
+from LogSpider import Spider
 
 
-class TestLogSpider(TestCase):
+class TestSpider(TestCase):
     def test_LogSpider(self):
         Configuration.init()
-        LogSpider(logType=Configuration.logType)
+        Spider(logType=Configuration.logType)

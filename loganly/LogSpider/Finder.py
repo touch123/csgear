@@ -3,13 +3,16 @@
 # @Author : Max
 # @FileName: Finder.py
 # @IDE: PyCharm
+
+import sys
 import DBMS
 import Configuration
-import pprint
 import json
 from optparse import OptionParser
 import Filter
 
+def WriteMsg(str):
+    sys.stderr.write(str+'\n')
 
 def Finder(dicationary):
     d = dicationary
@@ -17,6 +20,7 @@ def Finder(dicationary):
     types = DBMS.getTable(d['logType'])
     for i in range(0, len(types)):
         types[i] = types[i][1]
+
     # 构造的命令由两部分组成：
     # 1.有占位符的sql查询语句
     # 2.括号内占位符所代表的变量名
@@ -45,13 +49,13 @@ def Finder(dicationary):
         # 其他所有出现的特殊条件都用and作为前缀
         command += ' AND ' + keys[i] + " = '" + data[i] + "'"
 
-    print command
+    WriteMsg(command)
 
     lists = DBMS.search(command)
     for item in lists:
         result.append(dict(zip(types, item)))
 
-    print "NOTICE: Search complete, " + str(len(result)) + " eligible items"
+    WriteMsg("NOTICE: Search complete, " + str(len(result)) + " eligible items")
     return result
 
 
@@ -93,4 +97,8 @@ if __name__ == '__main__':
     result = Finder(
         {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,
          'MrchId': options.MrchId})
-    Filter.Filter(result)
+
+    for item in result:
+    	print(item["path"])
+    	
+    #Filter.Filter(result)

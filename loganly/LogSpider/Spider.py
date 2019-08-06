@@ -3,13 +3,15 @@
 # @Author : Max
 # @FileName: LogSpider.py
 # @IDE: PyCharm
+
 import os
-import Configuration
 import unpacking
 import Dealer
 import DBMS
 from optparse import OptionParser
 import datetime
+
+import Configuration
 
 
 def Spider(fileDate=None, logType=Configuration.logType):

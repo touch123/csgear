@@ -3,24 +3,27 @@
 # @Author : Max
 # @FileName: head.py
 # @IDE: PyCharm
+
+import sys
 import sqlite3
 import Configuration
 import os
-import pprint
 
 conn = None
 c = None
 
+def WriteMsg(str):
+    sys.stderr.write(str+'\n')
 
 # 初始化数据库，创建并检查表
 def init():
     if not os.path.isfile(str(Configuration.db_path)):
-        print "ERROR: datebase " + str(Configuration.db_path) + " not found."
+        WriteMsg("ERROR: datebase " + str(Configuration.db_path) + " not found.")
         exit()
     global conn, c
     conn = sqlite3.connect(str(Configuration.db_path))
     c = conn.cursor()
-    print "NOTICE: Initialize database " + str(Configuration.db_path)
+    WriteMsg("NOTICE: Initialize database " + str(Configuration.db_path))
 
     # 创建表
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
@@ -63,8 +66,8 @@ def insert_dict_into_sql(logtype, dicts):
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
 
         c.execute(insert_str, values)
-    print "NOTICE: for total " + str(
-        len(dicts)) + " files values has been added into table " + logtype + " in database."
+    WriteMsg("NOTICE: for total " + str(
+        len(dicts)) + " files values has been added into table " + logtype + " in database." )
 
 
 def sign(fileDate, logType):
@@ -88,7 +91,7 @@ def logout():
     conn.commit()
     c.close()
     conn.close()
-    print "NOTICE: logout database"
+    WriteMsg("NOTICE: logout database")
 
 
 def getTable(logType):

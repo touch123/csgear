@@ -3,12 +3,17 @@
 # @Author : Max
 # @FileName: Sensor.py
 # @IDE: PyCharm
+
 import Configuration
 import os
 import DBMS
 
 
 def Sensor(fileDate=None):
+    '''
+    根据fileDate 检测系统中指定配置目录下的日志文件
+    如fileDate 为None,则检测所有文件
+    '''
     for item in file_names(Configuration.log_path):
         portion = os.path.splitext(item)
 

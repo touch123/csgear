@@ -3,21 +3,24 @@
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 import Configuration
 
 
 # Configuration.db_path
 
-engine = create_engine('sqlite:///aa.db?check_same_thread=False', echo=True')
-from sqlalchemy.ext.declarative import declarative_base
+engine = create_engine('sqlite:///aa.db?check_same_thread=False', echo=True)
+
+
 Base = declarative_base()
 
 from sqlalchemy import Column, Integer, String
 
 class Postran(Base):
-    __tablename__ = 'postran'
+    __tablename__ = 'T_postran'
     
+    rowid = Column(Integer, primary_key=True)
     pid = Column(String(10))
     filedate = Column(String(8))
     path = Column(String(40))
@@ -34,8 +37,9 @@ class Postran(Base):
                    self.pid, self.path, self.respcode)
 
 class Ictran(Base):
-    __tablename__ = 'ictran'
+    __tablename__ = 'T_ictran'
     
+    rowid = Column(Integer, primary_key=True)
     pid = Column(String(10))
     filedate = Column(String(8))
     path = Column(String(40))
@@ -52,15 +56,17 @@ class Ictran(Base):
                    self.pid, self.path, self.respcode)
 
 class Sign(Base):
-    __tablename__ = 'ictran'
+    __tablename__ = 'T_sign'
     
+    rowid = Column(Integer, primary_key=True)
     logtype = Column(String(10))
     filedate = Column(String(8))
     status = Column(String(40))
 
 class Mis_clt(Base):
-    __tablename__ = 'mis_clt'
+    __tablename__ = 'T_mis_clt'
     
+    rowid = Column(Integer, primary_key=True)
     pid = Column(String(10))
     filedate = Column(String(8))
     path = Column(String(40))
@@ -68,9 +74,10 @@ class Mis_clt(Base):
     amount = Column(String(13))
     termid = Column(String(8))
 
-class Postran(Base):
-    __tablename__ = 'postran'
+class QrCodetran(Base):
+    __tablename__ = 'T_qrcodetran'
     
+    rowid = Column(Integer, primary_key=True)
     pid = Column(String(10))
     filedate = Column(String(8))
     path = Column(String(40))
@@ -91,6 +98,7 @@ class Postran(Base):
 class Qr_clt(Base):
     __tablename__ = 'qr_clt'
     
+    rowid = Column(Integer, primary_key=True)
     pid = Column(String(10))
     filedate = Column(String(8))
     path = Column(String(40))
@@ -135,6 +143,8 @@ def delet_old_sign(logType, fileDate=None):
 
 Session = sessionmaker(bind=engine)
 session = Session()
+
+"""
 ed_user = User(name='ed', fullname='Ed Jones', password='edspassword')
 session.add(ed_user)
 session.commit()
@@ -144,33 +154,22 @@ mod_user = session.query(User).filter_by(name='ed').first()
 # 将ed用户的密码修改为modify_paswd
 mod_user.password = 'modify_passwd'
 
-# 确认修改
-session.commit()
 
 # 要删除需要先将记录查出来
 del_user = session.query(User).filter_by(name='ed').first()
 
-# 打印一下，确认未删除前记录存在
-del_user
-
 # 将ed用户记录删除
 session.delete(del_user)
 
-# 确认删除
-session.commit()
 
 # 遍历查看，已无ed用户记录
 for user in session.query(User):
     print(user)
 
-
 our_user = session.query(User).filter_by(name='ed').first()
+"""
 
 
-sql = "select * from users"
-
-# sqlalchemy使用execute方法直接执行SQL
-records = session.execute(sql)
 
 
 def insert_dict_into_sql(logtype, dicts):
@@ -178,43 +177,37 @@ def insert_dict_into_sql(logtype, dicts):
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
-        c.execute(insert_str, values)
+        session.execute(insert_str, values)
     print "NOTICE: for total " + str(len(dicts)) + " files values has been added into table " + logtype + " in database."
 
 
 def sign(fileDate, logType):
-    c.execute('INSERT sign VALUES ("%s","%s","%s")' % (logType, fileDate, "1"))
+    session.execute('INSERT sign VALUES ("%s","%s","%s")' % (logType, fileDate, "1"))
 
 
 def skip(logType, FileDate):
-    c.execute('SELECT * FROM sign WHERE logType= "%s" and FileDate = "%s"' % (logType, FileDate))
-    return c.fetchall()
+    aa = session.execute('SELECT * FROM sign WHERE logType= "%s" and FileDate = "%s"' % (logType, FileDate))
+    return aa.fetchall()
 
 
 def search(command):
-    c.execute(command)
+    aa = session.execute(command)
     result = []
-    for item in c.fetchall():
+    for item in aa.fetchall():
         result.append(item[1])
     return result
 
 
 def logout():
-    conn.commit()
-    c.close()
-    conn.close()
+    session.close()
 
 
 def getTable(logType):
-    c.execute('PRAGMA table_info([%s])' % logType)
-    return c.fetchall()
+    aa = session.execute('PRAGMA table_info([%s])' % logType)
+    return aa.fetchall()
 
 
 if __name__ == '__main__':
     init()
-    # Configuration.init()
-    # delete_table("qrcodetran")
-    # insert_dict_into_sql('postran', unpacking.classifying('postran.20190116'))
-    # insert_dict_into_sql('mis_clt', unpacking.classifying_mis('mis_clt.20190116'))
-    # insert_dict_into_sql('qrcodetran', unpacking.classifying('qrcodetran.20190116'))
     logout()
+

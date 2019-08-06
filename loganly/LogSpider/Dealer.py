@@ -68,14 +68,8 @@ def file_name(user_dir):
 
 if __name__ == '__main__':
     pass
-    # main()
 
     # 拆分成以pid为文件名
-    classification("log\\qrcodetran.20190420")
-    classification("log\\postran.20190116")
-    classification("log\\mis_clt.20190116")
-    classification("log\\qrcodetran.20190107")
-    classification("log\\qr_clt.20190107")
 
     # 遍历刚刚生成的文件夹下面的文件
     # *可选：多进程同时处理* 目前没必要

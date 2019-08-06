@@ -3,10 +3,12 @@
 # @Author : Max
 # @FileName: unpacking_postran.py
 # @IDE: PyCharm
-import Library
-import Dealer
+
+
 import codecs
 
+import Library
+import Dealer
 
 # 解析关键词列表
 def unpacking_postran(file_path):

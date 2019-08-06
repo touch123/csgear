@@ -1,4 +1,7 @@
 
-__all__ = ['Library']
+__all__ = ['Library','Configuration']
 
 import Library
+import Configuration
+
+
