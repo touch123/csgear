@@ -76,3 +76,4 @@ output:
       - 'Procp GetTermExtra Begin ...'
       - 'unpack_POS8583 function OK!'
       - 'Proc Abc_UnpackAbc End OK ...'
+      - '^\d*: '

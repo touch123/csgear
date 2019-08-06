@@ -16,8 +16,9 @@ def Filter(d):
             lines = log.readlines()
             for line in lines:
                 # 过滤规则
+
                 for rule in Configuration.filters:
-                    if rule in line:
+                    if re.search(rule, line):
                         lines.remove(line)
                 # 翻译规则
                 # highline 规则
