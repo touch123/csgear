@@ -88,10 +88,9 @@ parser.add_option("-m", "--MrchId",
 (options, args) = parser.parse_args()
 
 if __name__ == '__main__':
-    Configuration.init('debug.yml')
+    Configuration.init()
     DBMS.init()
     result = Finder(
         {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,
          'MrchId': options.MrchId})
-    # result = Finder({'logType': 'postran', 'FileDate': '20190116'})
     Filter.Filter(result)
