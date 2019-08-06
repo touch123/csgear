@@ -106,4 +106,4 @@ venv.bak/
 loganly/LogSpider/log/
 loganly/LogSpider/classified_log
 .idea
-.pyc
+*.pyc
