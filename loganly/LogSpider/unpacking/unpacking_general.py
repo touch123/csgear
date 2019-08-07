@@ -49,7 +49,3 @@ def classifying(file_name):
 
     return results
 
-
-if __name__ == '__main__':
-    Configuration.init()
-    pprint.pprint(classifying('qrcodetran.20190116'))

@@ -4,9 +4,8 @@
 # @FileName: head.py
 # @IDE: PyCharm
 import Library
-import Dealer
+import iso8583
 import codecs
-import unpacking_8583
 import Configuration
 import os
 
@@ -70,7 +69,7 @@ def classifying_mis(file_name):
     for item in lists:
         result = []
         temp = unpacking_mis(path + file_name + "/" + item)
-        couple = unpacking_8583.unpacking(temp[0])
+        couple = decode_8583(temp[0])
         result.append(('TraceNo', couple[0]))
         result.append(('TermID', couple[1]))
         result.append(('PID', item))
@@ -78,6 +77,13 @@ def classifying_mis(file_name):
         result.append(('path', path + file_name + "/" + item))
         results.append(dict(result))
     return results
+
+
+def decode_8583(txt):
+    respose = iso8583.iso_8583("my_head", "pos", txt)
+    fields = respose.unpack()
+    # respose.ISO8583_testOutput()
+    return fields[11],fields[41]
 
 
 # 字符串删除算法一：通过列表
@@ -104,14 +110,5 @@ def get_pure_8583(head,tail,line):
     return delete_substr_method2(delete_substr_method2(line,head),tail)
 
 
-if __name__ == '__main__':
-    # 测试unpacking_mis函数
-    # print(unpacking("5897"))
-    # for item in reader.file_name("log//classified_log//mis_clt.20190116"):
-    #    temp = unpacking_mis("log//classified_log//mis_clt.20190116//" + item)
-    #    print(item + " : " + str(temp[1]))
-    #    print (item + " : " + str(unpacking_8583.unpacking(temp[0])))
-    #    print (item + " : " + unpacking_8583.unpacking("0000" + temp[1]))
-    print classifying_mis('mis_clt.20190116')
 
 
