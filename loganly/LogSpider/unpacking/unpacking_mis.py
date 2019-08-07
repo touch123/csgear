@@ -12,6 +12,8 @@ import os
 
 
 def unpacking_mis(file_path):
+    str_reads = None
+    str_write = None
     if not os.path.isfile(file_path):
         print "WARNING: file " + file_path + " don't exist."
     with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
@@ -64,7 +66,7 @@ def classifying_mis(file_name):
     FileDate = Library.FileDate(file_name)
     path = Configuration.classified_path
     # path + file_name
-    lists = Dealer.file_name(path + file_name)
+    lists = Library.file_name(path + file_name)
     for item in lists:
         result = []
         temp = unpacking_mis(path + file_name + "/" + item)

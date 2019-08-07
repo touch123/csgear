@@ -68,6 +68,12 @@ output:
 
   filter:
     re:
+      - '^\d{1,3}\: '
+      - 'begin pack DE'
+      - 'Dcc'
+      - 'g_Compressed'
+      - 'Proc'
+      - 'Transcation Start'
       - 'Proc GetTermInfo End OK ...'
       - 'GetTransType end ok...'
       - 'GetTransType begin ...'
@@ -76,4 +82,22 @@ output:
       - 'Procp GetTermExtra Begin ...'
       - 'unpack_POS8583 function OK!'
       - 'Proc Abc_UnpackAbc End OK ...'
-      - '^\d*: '
+      - 'Ready to process new transaction'
+      - '\*{10,}'
+      - '^\[.*?- (.*?)\] : *$'
+      - 'RawData=='
+
+  translation:
+    re:
+      'CardType': '卡类型:'
+      'TransType': '交易类型:'
+      'DisAmount': '折扣金额:'
+      'begin': '开始'
+      'RespCode(.*)': '响应码:\g<1>'
+      'szRrn(.*)': '参考号:\g<1>'
+      'Chase (.*) begin': '开始交易 \g<1>'
+      '(.*) begin ...': '\g<1> 开始'
+      'szBuf(.*)': '交易结果\g<1>'
+      'TermId': '终端号'
+      'MrchId': '款台号'
+      'CountNo': '流水号'

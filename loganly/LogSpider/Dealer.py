@@ -57,15 +57,6 @@ def mk_dir(dir_path):
         return False
 
 
-def file_name(user_dir):
-    file_list = list()
-    for root, dirs, files in os.walk(user_dir):
-        for file in files:
-            file_list.append(file)
-            # file_list.append(os.path.join(root, file))
-    return file_list
-
-
 if __name__ == '__main__':
     pass
 

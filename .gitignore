@@ -107,3 +107,4 @@ loganly/LogSpider/log/
 loganly/LogSpider/classified_log
 .idea
 *.pyc
+.sqlite

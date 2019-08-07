@@ -38,7 +38,7 @@ def classifying(file_name):
     FileDate = Library.FileDate(file_name)
     FileName = Library.FileName(file_name)
     path = Configuration.classified_path
-    lists = Dealer.file_name(path + file_name)
+    lists = Library.file_name(path + file_name)
     for item in lists:
         result = unpacking(path + file_name + "/" + item, FileName)
         # 和文件名相关的自定义部分

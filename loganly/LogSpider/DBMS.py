@@ -12,8 +12,10 @@ import os
 conn = None
 c = None
 
+
 def WriteMsg(str):
-    sys.stderr.write(str+'\n')
+    sys.stderr.write(str + '\n')
+
 
 # 初始化数据库，创建并检查表
 def init():
@@ -26,51 +28,38 @@ def init():
     WriteMsg("NOTICE: Initialize database " + str(Configuration.db_path))
 
     # 创建表
-    c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
-              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
-              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS sign (logType TEXT, FileDate TEXT, Status BOOLEAN)')
-    c.execute('CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS qrcodetran (pid TEXT, FileDate TEXT, path TEXT,rrn TEXT, '
-              'respcode TEXT, countno TEXT, TermId TEXT, MrchId TEXT, traceno TEXT, amount TEXT, '
-              'auth_code TEXT, orderid TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS qr_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT)')
-
-
-def drop_table():
-    tables = ['postran', 'mis_clt']
-    for item in tables:
-        c.execute('DROP TABLE  ' + item)
-
-
-def delete_table(logtype, fileDate=None):
-    if fileDate:
-        c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logtype, fileDate))
-    else:
-        c.execute('DELETE FROM %s' % logtype)
+    # c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
+    #           'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
+    # c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
+    #           'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
+    # c.execute('CREATE TABLE IF NOT EXISTS sign_logs (logType TEXT, FileDate TEXT, Status BOOLEAN)')
+    # c.execute('CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT)')
+    # c.execute('CREATE TABLE IF NOT EXISTS qrcodetran (pid TEXT, FileDate TEXT, path TEXT,rrn TEXT, '
+    #           'respcode TEXT, countno TEXT, TermId TEXT, MrchId TEXT, traceno TEXT, amount TEXT, '
+    #           'auth_code TEXT, orderid TEXT)')
+    # c.execute('CREATE TABLE IF NOT EXISTS qr_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT)')
 
 
 def delet_old_sign(logType, fileDate=None):
     c.execute('DELETE FROM sign WHERE logType = "%s" and FileDate = "%s"' % (logType, fileDate))
 
 
-def delet_old_data(logType, fileDate=None):
+def delete_logs_by_date(logType, fileDate=None):
     c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logType, fileDate))
 
 
 def insert_dict_into_sql(logtype, dicts):
-    delet_old_data(logtype, dicts[1]["FileDate"])
+    delete_logs_by_date(logtype, dicts[1]["FileDate"])
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
 
         c.execute(insert_str, values)
     WriteMsg("NOTICE: for total " + str(
-        len(dicts)) + " files values has been added into table " + logtype + " in database." )
+        len(dicts)) + " files values has been added into table " + logtype + " in database.")
 
 
-def sign(fileDate, logType):
+def sign_logs(fileDate, logType):
     c.execute('INSERT sign VALUES ("%s","%s","%s")' % (logType, fileDate, "1"))
 
 

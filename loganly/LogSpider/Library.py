@@ -5,6 +5,7 @@
 # @IDE: PyCharm
 import re
 import Configuration
+import os
 
 # postran预处理关键词
 postran_key_words = Configuration.postran_key_words
@@ -173,6 +174,14 @@ def FileName(txt):
         return word1
     else:
         return None
+
+def file_name(user_dir):
+    file_list = list()
+    for root, dirs, files in os.walk(user_dir):
+        for file in files:
+            file_list.append(file)
+            # file_list.append(os.path.join(root, file))
+    return file_list
 
 
 def test():

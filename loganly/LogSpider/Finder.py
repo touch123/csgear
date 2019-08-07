@@ -13,6 +13,8 @@ import Filter
 
 def WriteMsg(str):
     sys.stderr.write(str+'\n')
+    sys.stderr.flush()
+
 
 def Finder(dicationary):
     d = dicationary
@@ -92,13 +94,13 @@ parser.add_option("-m", "--MrchId",
 (options, args) = parser.parse_args()
 
 if __name__ == '__main__':
-    Configuration.init()
+    Configuration.init('debug.yml')
     DBMS.init()
     result = Finder(
         {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,
          'MrchId': options.MrchId})
 
     for item in result:
-    	print(item["path"])
-    	
-    #Filter.Filter(result)
+        print(item["path"])
+
+    Filter.Filter(result)

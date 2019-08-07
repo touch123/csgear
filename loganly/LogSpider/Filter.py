@@ -10,19 +10,20 @@ import Configuration
 
 
 def WriteMsg(str):
-    sys.stderr.write(str+'\n')
-    
+    sys.stderr.write(str + '\n')
+
 
 def IsExclude(line):
     for rule in Configuration.filters:
         if re.search(rule, line):
-	    return True	
+            return True
     return False
 
+
 def Translate(line):
-    for key,value in Configuration.translation.items():
-        output = re.sub(key,value,line)
-        if output != line :
+    for key, value in Configuration.translation.items():
+        output = re.sub(key, value, line)
+        if output != line:
             return output
     return line
 
@@ -48,11 +49,10 @@ def FilterByPipe():
     '''
     cmd运行,从标准输入获取文件列表
     '''
-    lines=sys.stdin.readlines()
+    lines = sys.stdin.readlines()
     for item in lines:
-        WriteMsg(item.strip()+' doing...')
-    	DoFilter(item.strip())
-
+        WriteMsg(item.strip() + ' doing...')
+        DoFilter(item.strip())
 
 
 def Filter(d):

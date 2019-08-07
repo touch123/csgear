@@ -41,6 +41,7 @@ def file_names(user_dir=Configuration.log_path):
 
 
 if __name__ == '__main__':
-    Configuration.init()
+    Configuration.init('debug.yml')
+    DBMS.init()
     Sensor()
     DBMS.logout()
