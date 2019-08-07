@@ -60,7 +60,7 @@ def delet_old_data(logType, fileDate=None):
 
 
 def insert_dict_into_sql(logtype, dicts):
-    delet_old_data(logtype, dicts[1]["FileDate"])
+    # delet_old_data(logtype, dicts[1]["FileDate"])
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
@@ -77,6 +77,11 @@ def sign(fileDate, logType):
 def skip(logType, FileDate):
     c.execute('SELECT * FROM sign WHERE logType= "%s" and FileDate = "%s"' % (logType, FileDate))
     return c.fetchall()
+
+
+def related_mis_pos(path):
+    c.execute('SELECT b.path from postran a, mis_clt b where 1=1 and a.FileDate = b.FileDate and a.TermId = b.TermId and a.path="%s"'%(path))
+    return c.ferchall()
 
 
 def search(command):

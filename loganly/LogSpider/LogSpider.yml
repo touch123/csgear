@@ -28,7 +28,7 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
 
   ictran:
     re:
@@ -95,6 +95,9 @@ output:
       'Chase (.*) begin' : '开始交易 \g<1>'
       '(.*) begin ...' : '\g<1> 开始'
       'szBuf(.*)' : '交易结果\g<1> '
+  process:
+    re:
+      '(.*) SentHost' : '("\g<1>") '
 
 
 

@@ -175,6 +175,7 @@ def FileName(txt):
     else:
         return None
 
+
 def file_name(user_dir):
     file_list = list()
     for root, dirs, files in os.walk(user_dir):
@@ -202,4 +203,5 @@ def test():
 
 
 if __name__ == '__main__':
-    pass
+    print re.search("^.*PROC_MSG INSERT.*VALUES\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\)",
+                    '''[11:47:09 - 15228] : PROC_MSG INSERT INTO T_TransLine(IssuerId, Acquirer, TransType, TransName, TraceNo,VoucherNo, BatchNo, Pan, ExpiryDate,MrchId, TermId, TransDate, TransTime,MsgType, ProcessCode, Amount, EntryMode, RespCode, Result, AuthNo,OrigTransDate, OrigTransTime, OrigTransType,CardName, Rrn, OrigRrn,VoidFlag, ReversalFlag, OfflineFlag,CipherTrack2, CipherTrack3, CipherPan,MisId, CardSeqNo,TC, TVR, AID, ATC, TSI, AppLabel,PinVersion, EmvFlag, PinOffFlag, PinRespCode,IssDefData, IcData1, IcData2, IcData3,MisTraceNo, CountNo, OpId, CashierId,ReqTransDate, ReqTransTime, CVD2, RefundAmount,FQNumber, FirstAmount, FeeAmount,OrigAmount,ReserveField,DccFlag,CardType) VALUES('05', '1', '0', '����/SALE', '039258', '039113', '001124', '512466******0551', '1801', '103350510002414', '12503326', '', '', '0200', '00a000', 241.00, '0901', 'FN', '����δ��Ӧ', '', '', '', '', '��������(03050001)', '001124039258', '', '0', '0', '0', '8CEED636E8361157FB0459637CD9AFCF502291AF8BC251F9', '100CF9111AFF9F4FCFB17C67CB0DCC9ADA6A6C95F16E5517E6D3C05DE994C929AB17F0C9D696E6E3A75AF52593C5E4FA', '9F148C3108631AF580F8A9F1237B384F', '12MIS503', '', '', '', '', '', '', '', '', '0', '0', '00', '', '', '', '', '214114918', '6004', '35060106', '75935', '20140802', '114709', '', 0.00, '', 0.00, 0.00,241.00,' ', '0', '') ''')

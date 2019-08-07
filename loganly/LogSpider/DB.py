@@ -208,6 +208,5 @@ def getTable(logType):
 
 
 if __name__ == '__main__':
-    init()
-    logout()
-
+    # init()
+    # logout()

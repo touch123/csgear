@@ -68,7 +68,7 @@ parser = OptionParser(usage="usage: %prog [options] filename",
 parser.add_option("-t", "--type",
                   action="store",
                   dest="logType",
-                  default='*',
+                  default='postran',
                   help=u"指定要查询日志的类型", )
 parser.add_option("-d", "--date",
                   action="store",

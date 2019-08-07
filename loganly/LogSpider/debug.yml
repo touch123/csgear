@@ -28,7 +28,7 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
 
   ictran:
     re:
@@ -38,7 +38,7 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
 
   qrcodetran:
     re:

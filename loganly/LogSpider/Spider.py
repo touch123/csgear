@@ -17,7 +17,7 @@ import Configuration
 def Spider(fileDate=None, logType=Configuration.logType):
     # 将文件名拆成名字和后缀
     fileList = []
-    if logType is str:
+    if type(logType) == str:
         logType = [logType]
 
     for t in logType:
