@@ -4,6 +4,7 @@ input:
   logtype:
     - mis_clt
     - postran
+        related: mis_clt
     - qrcodetran
     - qr_clt
     - hoteltran
@@ -18,6 +19,7 @@ input:
     re:
       Head: '^(\\d+): '
       Tail: '.*?(\\[.*\\])'
+      Time: '^\[(.*) - \d*\] : recv buf:'
 
 
   postran:
@@ -28,7 +30,8 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
+      SendToHost: '^\[(.*?) - \d*\] : SendToHost to mis_clt'
 
   ictran:
     re:
@@ -38,7 +41,7 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
 
   qrcodetran:
     re:
@@ -64,6 +67,42 @@ input:
 output:
   path:  '/usr/src/classified_log/'
   dbpath: 'identifier.sqlite'
+  finder: '/usr/src/output'
+
+  filter:
+    re:
+      - '^\d{1,3}\: '
+      - 'begin pack DE'
+      - 'Dcc'
+      - 'g_Compressed'
+      - 'Proc'
+      - 'Transcation Start'
+      - 'Proc GetTermInfo End OK ...'
+      - 'GetTransType end ok...'
+      - 'GetTransType begin ...'
+      - 'GetTraceNo being ...'
+      - 'Proc CheckTermInfo End OK ...'
+      - 'Procp GetTermExtra Begin ...'
+      - 'unpack_POS8583 function OK!'
+      - 'Proc Abc_UnpackAbc End OK ...'
+      - 'Ready to process new transaction'
+
+  translation:
+    re:
+      'CardType' : '卡类型:'
+      'TransType' : '交易类型:'
+      'DisAmount' : '折扣金额:'
+      'begin' : '开始'
+      'RespCode(.*)' : '响应码:\g<1>'
+      'szRrn(.*)' : '参考号:\g<1>'
+      'Chase (.*) begin' : '开始交易 \g<1>'
+      '(.*) begin ...' : '\g<1> 开始'
+      'szBuf(.*)' : '交易结果\g<1> '
+  process:
+    re:
+      '(.*) SentHost' : '("\g<1>") '
+
+
 
   filter:
     re:

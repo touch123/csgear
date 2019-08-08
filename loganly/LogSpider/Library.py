@@ -5,6 +5,7 @@
 # @IDE: PyCharm
 import re
 import Configuration
+import os
 
 # postran预处理关键词
 postran_key_words = Configuration.postran_key_words
@@ -175,6 +176,15 @@ def FileName(txt):
         return None
 
 
+def file_name(user_dir):
+    file_list = list()
+    for root, dirs, files in os.walk(user_dir):
+        for file in files:
+            file_list.append(file)
+            # file_list.append(os.path.join(root, file))
+    return file_list
+
+
 def test():
     txt1 = "[03:10:01 - 35546] : begin pack DE 4"  # postran格式测试
     txt2 = "[03:10:01 - 32551] : connect MISP[172.18.18.3.5555] OK"  # mis格式测试
@@ -193,4 +203,5 @@ def test():
 
 
 if __name__ == '__main__':
-    pass
+    print re.search('^\[(.*?) - \d*\] : SendToHost to mis_clt',
+                    '''[03:10:01 - 3546] : SendToHost to mis_clt ....''').group(1)

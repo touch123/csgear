@@ -37,12 +37,12 @@ def classification(file_path):
             else:  # 数字开头的十六进制报文
                 if file:
                     file.write(line)
-                    # 打印进度条，python 2.7炸了不知道为啥
+                    # 打印进度条，python 2.7炸了不知道为啥不过反正都是在dockers里面跑也没人看呜呜呜
                     # if round(count / len(lines) * 100) != old_present*1.0:
                     #    print("Classifing: " + str(log.name) + "...... " + str(round(count / len(lines) * 100)) + "%")
                     #    old_present = round(count / len(lines) * 100)
         print "NOTICE: distributed " + str(os.path.split(file_path)[1]) + ' into ' + str(
-            len(catalog)) + ' file base on the PID.'
+            len(catalog)) + ' file base on the PID in path ' + str(path)
         return catalog
 
 
@@ -57,27 +57,12 @@ def mk_dir(dir_path):
         return False
 
 
-def file_name(user_dir):
-    file_list = list()
-    for root, dirs, files in os.walk(user_dir):
-        for file in files:
-            file_list.append(file)
-            # file_list.append(os.path.join(root, file))
-    return file_list
-
-
 if __name__ == '__main__':
     pass
-    # main()
 
     # 拆分成以pid为文件名
-    classification("log\\qrcodetran.20190420")
-    classification("log\\postran.20190116")
-    classification("log\\mis_clt.20190116")
-    classification("log\\qrcodetran.20190107")
-    classification("log\\qr_clt.20190107")
 
     # 遍历刚刚生成的文件夹下面的文件
-    # *可选：多进程同时处理*
+    # *可选：多进程同时处理* 目前没必要
     # 运行unpacking程序进行解析的提取
     # 抽取的结果在unpacking里面直接入库

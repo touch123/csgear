@@ -1,15 +1,41 @@
 version: '3'
 
+networks:
+  bmp-net:
 
 services:
 
-  logspider:
-    image: my.com:1333/chase/cmdsvr
-    #ports:
-    #  - 9000:9000
+  redis:
+    image: my.com:1333/chase/redis
+    hostname: redis
+    networks:
+      - bmp-net
+    ports:
+    - 6379:6379
+
+
+  worker:
+    image: chase/cmdsvr:test
+    hostname: worker
     volumes:
-      - D:/LogSpider:/usr/src/app
-      - D:/log:/usr/src/log
-      - D:/classified_log:/usr/src/classified_log
-    command: python /usr/src/app/Spider.py
-    #command: sh
+    - D:/log/:/usr/src/log/
+    - C:/Users/heckn/Documents/GitHub/csgear/loganly/LogSpider/:/usr/src/app/plugin/bmp_chktran.sh/LogSpider/
+    #- $PWD/csgear/db.sqlite3:/usr/src/db.sqlite3
+    #- $PWD/csgear/db.run.sqlite3:/usr/src/db.run.sqlite3
+
+    - /tmp/runtime/worker/:/tmp/runtime/
+    networks:
+      - bmp-net
+    ports:
+    - 9999:9001
+  csgear:
+    image: chase/csgear:test
+    hostname: django
+    volumes:
+    - C:/Users/heckn/Documents/GitHub/csgear/loganly/LogSpider/log/csgear/:/usr/src/log/
+    - /tmp/runtime/csgear/:/tmp/runtime/
+    networks:
+      - bmp-net
+    ports:
+    - 8000:8000
+    

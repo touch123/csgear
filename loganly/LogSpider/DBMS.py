@@ -3,20 +3,39 @@
 # @Author : Max
 # @FileName: head.py
 # @IDE: PyCharm
+
+import sys
 import sqlite3
 import Configuration
+import os
+from pprint import pprint
 
-# Configuration.init()
-conn = sqlite3.connect(str(Configuration.db_path))
-c = conn.cursor()
+conn = None
+c = None
 
+
+def WriteMsg(str):
+    sys.stderr.write(str + '\n')
+
+
+# 初始化数据库，创建并检查表
 def init():
+    if not os.path.isfile(str(Configuration.db_path)):
+        WriteMsg("ERROR: datebase " + str(Configuration.db_path) + " not found.")
+        exit()
+    global conn, c
+    conn = sqlite3.connect(str(Configuration.db_path))
+    c = conn.cursor()
+    WriteMsg("NOTICE: Initialize database " + str(Configuration.db_path))
+
+    # 创建表
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
-              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
+              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT, SendToHost TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS sign (logType TEXT, FileDate TEXT, Status BOOLEAN)')
-    c.execute('CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT)')
+    c.execute(
+        'CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT, Rrn TEXT, ProcessCode TEXT, MsgType TEXT, recv TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS qrcodetran (pid TEXT, FileDate TEXT, path TEXT,rrn TEXT, '
               'respcode TEXT, countno TEXT, TermId TEXT, MrchId TEXT, traceno TEXT, amount TEXT, '
               'auth_code TEXT, orderid TEXT)')
@@ -27,7 +46,6 @@ def drop_table():
     tables = ['postran', 'mis_clt']
     for item in tables:
         c.execute('DROP TABLE  ' + item)
-    conn.commit()
 
 
 def delete_table(logtype, fileDate=None):
@@ -35,22 +53,25 @@ def delete_table(logtype, fileDate=None):
         c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logtype, fileDate))
     else:
         c.execute('DELETE FROM %s' % logtype)
-    conn.commit()
 
 
 def delet_old_sign(logType, fileDate=None):
     c.execute('DELETE FROM sign WHERE logType = "%s" and FileDate = "%s"' % (logType, fileDate))
-    conn.commit()
+
+
+def delet_old_data(logType, fileDate=None):
+    c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logType, fileDate))
 
 
 def insert_dict_into_sql(logtype, dicts):
-    print logtype
-    print dicts
+    delet_old_data(logtype, dicts[1]["FileDate"])
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
+
         c.execute(insert_str, values)
-    print "NOTICE: for total " + str(len(dicts)) + " files values has been added into table " + logtype + " in database."
+    WriteMsg("NOTICE: for total " + str(
+        len(dicts)) + " files values has been added into table " + logtype + " in database.")
 
 
 def sign(fileDate, logType):
@@ -62,11 +83,27 @@ def skip(logType, FileDate):
     return c.fetchall()
 
 
+def related_mis_pos(path):
+    c.execute(
+        'SELECT b.path from postran a, mis_clt b where 1=1 and a.FileDate = b.FileDate and a.TermId = b.TermId and a.path="%s"' % (
+            path))
+    return c.fetchall()
+
+
+def search_mis_clt(pid, time):
+    c.execute('select * from mis_clt where recv like  "%s" and pid > "%s" order by pid' % (time, pid))
+    aaa = c.fetchall()
+    if len(aaa) > 0:
+        return aaa[0]
+    else:
+        return None
+
+
 def search(command):
     c.execute(command)
     result = []
     for item in c.fetchall():
-        result.append(item[1])
+        result.append(item)
     return result
 
 
@@ -74,6 +111,7 @@ def logout():
     conn.commit()
     c.close()
     conn.close()
+    WriteMsg("NOTICE: logout database")
 
 
 def getTable(logType):
@@ -83,9 +121,4 @@ def getTable(logType):
 
 if __name__ == '__main__':
     init()
-    # Configuration.init()
-    # delete_table("qrcodetran")
-    # insert_dict_into_sql('postran', unpacking.classifying('postran.20190116'))
-    # insert_dict_into_sql('mis_clt', unpacking.classifying_mis('mis_clt.20190116'))
-    # insert_dict_into_sql('qrcodetran', unpacking.classifying('qrcodetran.20190116'))
     logout()

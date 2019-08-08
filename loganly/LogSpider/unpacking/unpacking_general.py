@@ -9,11 +9,14 @@ import Dealer
 import codecs
 import Configuration
 import pprint
+import os
 
 
 # 解析关键词列表
 def unpacking(file_path, type):
     result = []  # 空结果列表，采集完了再把列表变成字典
+    if not os.path.isfile(file_path):
+        print "WARNING: file " + file_path + " don't exist."
     with codecs.open(file_path, 'r', encoding='gb2312', errors='ignore') as log:
         words = list(Configuration.get_re(type))
         rules = list(Configuration.get_re(type).values())
@@ -21,6 +24,8 @@ def unpacking(file_path, type):
             # 一次性匹配多个关键词
             for i in range(0, len(words)):
                 if words[i] in line:
+                    # if words[i] == 'SendToHost':
+                    #     print words[i] + ": " +line
                     if rules[i]:
                         data = Library.DIYSearch(rules[i], line)
                         if data:
@@ -35,7 +40,7 @@ def classifying(file_name):
     FileDate = Library.FileDate(file_name)
     FileName = Library.FileName(file_name)
     path = Configuration.classified_path
-    lists = Dealer.file_name(path + file_name)
+    lists = Library.file_name(path + file_name)
     for item in lists:
         result = unpacking(path + file_name + "/" + item, FileName)
         # 和文件名相关的自定义部分
@@ -47,6 +52,3 @@ def classifying(file_name):
     return results
 
 
-if __name__ == '__main__':
-    Configuration.init()
-    pprint.pprint(classifying('qrcodetran.20190116'))
