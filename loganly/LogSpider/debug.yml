@@ -18,6 +18,7 @@ input:
     re:
       Head: '^(\\d+): '
       Tail: '.*?(\\[.*\\])'
+      recv buf: '^\[(.*) - \d*\] : recv buf:'
 
 
   postran:
@@ -29,6 +30,8 @@ input:
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
       TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
+      SendToHost: '^\[(.*?) - \d*\] : SendToHost to mis_clt'
+    related: mis_clt
 
   ictran:
     re:

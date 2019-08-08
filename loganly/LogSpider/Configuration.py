@@ -8,6 +8,7 @@ import sys
 import yaml
 import codecs
 import os
+from pprint import pprint
 
 doc = None
 logType = None
@@ -19,6 +20,7 @@ db_path = None
 finder = None
 filters = None
 translation = None
+mis_clt_key_words = None
 
 def WriteMsg(str):
     sys.stderr.write(str+'\n')
@@ -26,13 +28,14 @@ def WriteMsg(str):
 # 初始化关键词列表
 def init(fileName = 'LogSpider.yml'):
     WriteMsg("NOTICE: Initialize Configuration")
-    global doc, logType, postran_key_words, qrcodetran_key_words, log_path, classified_path, db_path, finder, filters, translation
+    global doc, logType, postran_key_words, qrcodetran_key_words, mis_clt_key_words, log_path, classified_path, db_path, finder, filters, translation
     try:
         with codecs.open(fileName, 'r', errors='ignore') as file:
             doc = yaml.safe_load(file)
             logType = doc['input']['logtype']
             postran_key_words = doc['input']['postran']['re']
             qrcodetran_key_words = doc['input']['qrcodetran']['re']
+            mis_clt_key_words = doc['input']['mis_clt']['re']
             log_path = doc['input']['path']
             classified_path = doc['output']['path']
             db_path = doc['output']['dbpath']
@@ -66,4 +69,5 @@ def self_check():
 
 if __name__ == '__main__':
     init('debug.yml')
+    pprint(doc)
     self_check()

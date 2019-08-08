@@ -12,8 +12,10 @@ import os
 conn = None
 c = None
 
+
 def WriteMsg(str):
-    sys.stderr.write(str+'\n')
+    sys.stderr.write(str + '\n')
+
 
 # 初始化数据库，创建并检查表
 def init():
@@ -27,11 +29,12 @@ def init():
 
     # 创建表
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
-              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
+              'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT, SendToHost TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS ictran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS sign (logType TEXT, FileDate TEXT, Status BOOLEAN)')
-    c.execute('CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT)')
+    c.execute(
+        'CREATE TABLE IF NOT EXISTS mis_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT, TermID TEXT, Rrn TEXT, ProcessCode TEXT, MsgType TEXT, recv TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS qrcodetran (pid TEXT, FileDate TEXT, path TEXT,rrn TEXT, '
               'respcode TEXT, countno TEXT, TermId TEXT, MrchId TEXT, traceno TEXT, amount TEXT, '
               'auth_code TEXT, orderid TEXT)')
@@ -60,14 +63,14 @@ def delet_old_data(logType, fileDate=None):
 
 
 def insert_dict_into_sql(logtype, dicts):
-    # delet_old_data(logtype, dicts[1]["FileDate"])
+    delet_old_data(logtype, dicts[1]["FileDate"])
     for d in dicts:
         keys, values = zip(*d.items())
         insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
 
         c.execute(insert_str, values)
     WriteMsg("NOTICE: for total " + str(
-        len(dicts)) + " files values has been added into table " + logtype + " in database." )
+        len(dicts)) + " files values has been added into table " + logtype + " in database.")
 
 
 def sign(fileDate, logType):
@@ -80,7 +83,15 @@ def skip(logType, FileDate):
 
 
 def related_mis_pos(path):
-    c.execute('SELECT b.path from postran a, mis_clt b where 1=1 and a.FileDate = b.FileDate and a.TermId = b.TermId and a.path="%s"'%(path))
+    c.execute(
+        'SELECT b.path from postran a, mis_clt b where 1=1 and a.FileDate = b.FileDate and a.TermId = b.TermId and a.path="%s"' % (
+            path))
+    return c.ferchall()
+
+
+def search_mis_clt(time, pid):
+    c.execute('select * from mis_clt where recv like  "%s" and pid > "%s" order by pid' % (time, pid))
+    print c.ferchall()
     return c.ferchall()
 
 

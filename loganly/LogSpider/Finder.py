@@ -11,8 +11,9 @@ import json
 from optparse import OptionParser
 import Filter
 
+
 def WriteMsg(str):
-    sys.stderr.write(str+'\n')
+    sys.stderr.write(str + '\n')
     sys.stderr.flush()
 
 
@@ -30,12 +31,13 @@ def Finder(dicationary):
     keys = list(d)
     data = list(d.values())
 
+    # 构造查询语句
     # 判断是否为第一个
     first = True
     for i in range(0, len(keys)):
 
         # 如果当前key上的value为None，跳过
-        if data[i] is None:
+        if data[i] is None or data[i] == "":
             continue
 
         # 跳过名字
@@ -57,6 +59,9 @@ def Finder(dicationary):
     for item in lists:
         result.append(dict(zip(types, item)))
 
+        DBMS.search_mis_clt(item["pid"], item["time"])
+        result.append(dict(zip(types, item)))
+
     WriteMsg("NOTICE: Search complete, " + str(len(result)) + " eligible items")
     return result
 
@@ -66,7 +71,7 @@ def Finder(dicationary):
 parser = OptionParser(usage="usage: %prog [options] filename",
                       version="%prog 1.0")
 parser.add_option("-t", "--type",
-                  action="store",
+                  action="addtion",
                   dest="logType",
                   default='postran',
                   help=u"指定要查询日志的类型", )

@@ -7,6 +7,7 @@ import codecs
 import re
 import sys
 import Configuration
+import DBMS
 
 
 def WriteMsg(str):

@@ -4,6 +4,7 @@ input:
   logtype:
     - mis_clt
     - postran
+        related: mis_clt
     - qrcodetran
     - qr_clt
     - hoteltran
@@ -18,6 +19,7 @@ input:
     re:
       Head: '^(\\d+): '
       Tail: '.*?(\\[.*\\])'
+      Time: '^\[(.*) - \d*\] : recv buf:'
 
 
   postran:
@@ -28,7 +30,8 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
+      SendToHost: '^\[(.*?) - \d*\] : SendToHost to mis_clt'
 
   ictran:
     re:
@@ -38,7 +41,7 @@ input:
       TermId: 'TermId = \[(.*?)\]'
       Amount: ' Amount =\[(.*?)\]'
       RespCode: 'RespCode = \[(.*?)\]'
-      TraceNo: "^.*PROC_MSG INSERT.*VALUES('.*?', '.*?', '.*?', '.*?', '(.*?)',.*)"
+      TraceNo: "^.*PROC_MSG INSERT.*VALUES\\('.*?', '.*?', '.*?', '.*?', '(.*?)',.*\\)"
 
   qrcodetran:
     re:

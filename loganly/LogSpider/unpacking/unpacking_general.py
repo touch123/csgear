@@ -24,6 +24,8 @@ def unpacking(file_path, type):
             # 一次性匹配多个关键词
             for i in range(0, len(words)):
                 if words[i] in line:
+                    # if words[i] == 'SendToHost':
+                    #     print words[i] + ": " +line
                     if rules[i]:
                         data = Library.DIYSearch(rules[i], line)
                         if data:
@@ -48,4 +50,5 @@ def classifying(file_name):
         results.append(dict(result))
 
     return results
+
 

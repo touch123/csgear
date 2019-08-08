@@ -23,10 +23,15 @@ def unpacking_mis(file_path):
         # 记录读写状态
         read = False
         write = False
+        rev_buf = None
         for line in log.readlines():
             pid = Library.ID(line)
+            if rev_buf is None:
+                rev_buf = Library.DIYSearch(Configuration.mis_clt_key_words['recv buf'], line)
+
             message_head = Library.message_head(line)
             if pid:
+
                 # 如果开头是pid文
                 # 1.报文头
                 # 2.连续的报文尾
@@ -35,7 +40,7 @@ def unpacking_mis(file_path):
                 if 'write2 .....' in line and write is False:
                     write = True
                     if read is True:
-                        read = False # 释放read开关节省时间
+                        read = False  # 释放read开关节省时间
                 elif 'read .....' in line and read is False:
                     read = True
                     if write is True:
@@ -43,7 +48,8 @@ def unpacking_mis(file_path):
                 elif 'read from MISP len' in line and read != 0:
                     str_write = "".join(writes).replace("\n", "")
                     str_reads = "".join(reads).replace("\n", "")
-                    return str_write, str_reads
+
+                    return str_write, str_reads, rev_buf
 
             else:
                 # 如果不是pid头
@@ -56,7 +62,7 @@ def unpacking_mis(file_path):
                         # print("R:" + line)
                         reads += str(get_pure_8583(Library.message_head(line) + ": ", Library.message_tail(line),
                                                    line)).split(" ")
-    return str_write, str_reads
+    return str_write, str_reads, rev_buf
 
 
 # 添加自定义关键词进返回的字典中
@@ -72,6 +78,10 @@ def classifying_mis(file_name):
         couple = decode_8583(temp[0])
         result.append(('TraceNo', couple[0]))
         result.append(('TermID', couple[1]))
+        result.append(('Rrn', couple[2]))
+        result.append(('ProcessCode', couple[3]))
+        result.append(('MsgType', couple[4]))
+        result.append(('recv', temp[2]))
         result.append(('PID', item))
         result.append(('FileDate', FileDate))
         result.append(('path', path + file_name + "/" + item))
@@ -82,8 +92,12 @@ def classifying_mis(file_name):
 def decode_8583(txt):
     respose = iso8583.iso_8583("my_head", "pos", txt)
     fields = respose.unpack()
+    for i in [11, 41, 37, 3, -3]:
+        if i not in fields:
+            fields.update({i: None})
     # respose.ISO8583_testOutput()
-    return fields[11],fields[41]
+
+    return fields[11], fields[41], fields[37], fields[3], fields[-3]
 
 
 # 字符串删除算法一：通过列表
@@ -106,9 +120,5 @@ def delete_substr_method2(in_str, in_substr):
     return res_str
 
 
-def get_pure_8583(head,tail,line):
-    return delete_substr_method2(delete_substr_method2(line,head),tail)
-
-
-
-
+def get_pure_8583(head, tail, line):
+    return delete_substr_method2(delete_substr_method2(line, head), tail)
