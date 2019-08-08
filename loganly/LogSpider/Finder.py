@@ -21,7 +21,7 @@ def Finder(d):
     result = []
     logType = Configuration.doc['input'][d['logType']]
     if 'related' in logType:
-        WriteMsg("111111111111111111111111111111111111111")
+        pass
     types = DBMS.getTable(d['logType'])
     for i in range(0, len(types)):
         types[i] = types[i][1]

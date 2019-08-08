@@ -92,12 +92,13 @@ def classifying_mis(file_name):
 def decode_8583(txt):
     respose = iso8583.iso_8583("my_head", "pos", txt)
     fields = respose.unpack()
+
     for i in [11, 41, 37, 3, -3]:
         if i not in fields:
             fields.update({i: None})
-    # respose.ISO8583_testOutput()
+    result = respose.ISO8583_responde()
 
-    return fields[11], fields[41], fields[37], fields[3], fields[-3]
+    return fields[11], fields[41], fields[37], fields[3], fields[-3], result
 
 
 # 字符串删除算法一：通过列表

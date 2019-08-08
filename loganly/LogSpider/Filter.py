@@ -14,10 +14,15 @@ def WriteMsg(str):
     sys.stderr.write(str + '\n')
 
 
-def IsExclude(line):
-    for rule in Configuration.filters:
-        if re.search(rule, line):
-            return True
+def IsExclude(line, type=None):
+    if type:
+        for rule in Configuration.doc['input'][type]['filter']['re']:
+            if re.search(rule, line):
+                return True
+    if type is None:
+        for rule in Configuration.filters:
+            if re.search(rule, line):
+                return True
     return False
 
 
@@ -29,12 +34,12 @@ def Translate(line):
     return line
 
 
-def DoFilter(filename):
+def DoFilter(filename, type=None):
     with codecs.open(filename, 'r', encoding='gb2312', errors='ignore') as log:
         lines = log.readlines()
         out_lines = []
         for line in lines:
-            if not IsExclude(line):
+            if not IsExclude(line, type):
                 outline = Translate(line)
                 print(outline.strip())
                 out_lines.append(outline)
@@ -56,13 +61,13 @@ def FilterByPipe():
         DoFilter(item.strip())
 
 
-def Filter(d):
+def Filter(d, type = None):
     '''
     程序调用   
     '''
     for item in d:
         file_path = item["path"]
-        DoFilter(file_path)
+        DoFilter(file_path, type)
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ import json
 def unpacking(txt):
     respose = unpacking.iso8583.iso_8583("my_head", "pos", txt)
     fields = respose.unpack()
-    # respose.ISO8583_testOutput()
+    respose.ISO8583_testOutput()
     return fields[11],fields[41]
 
 if __name__ == '__main__':
