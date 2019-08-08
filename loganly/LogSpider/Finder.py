@@ -7,7 +7,7 @@
 import sys
 import DBMS
 import Configuration
-import json
+from pprint import pprint
 from optparse import OptionParser
 import Filter
 
@@ -17,9 +17,11 @@ def WriteMsg(str):
     sys.stderr.flush()
 
 
-def Finder(dicationary):
-    d = dicationary
+def Finder(d):
     result = []
+    logType = Configuration.doc['input'][d['logType']]
+    if 'related' in logType:
+        WriteMsg("111111111111111111111111111111111111111")
     types = DBMS.getTable(d['logType'])
     for i in range(0, len(types)):
         types[i] = types[i][1]
@@ -57,10 +59,12 @@ def Finder(dicationary):
 
     lists = DBMS.search(command)
     for item in lists:
-        result.append(dict(zip(types, item)))
-
-        DBMS.search_mis_clt(item["pid"], item["time"])
-        result.append(dict(zip(types, item)))
+        # 字典key和value匹配
+        pack = dict(zip(types, item))
+        result.append(pack)
+        bbb = DBMS.search_mis_clt(pack["pid"], pack["SendToHost"])
+        if bbb:
+            result.append(dict(zip(types, bbb)))
 
     WriteMsg("NOTICE: Search complete, " + str(len(result)) + " eligible items")
     return result
@@ -71,7 +75,7 @@ def Finder(dicationary):
 parser = OptionParser(usage="usage: %prog [options] filename",
                       version="%prog 1.0")
 parser.add_option("-t", "--type",
-                  action="addtion",
+                  action="store",
                   dest="logType",
                   default='postran',
                   help=u"指定要查询日志的类型", )
@@ -95,11 +99,16 @@ parser.add_option("-m", "--MrchId",
                   dest="MrchId",
                   default=None,
                   help=u"指定要查询日志的MrchId", )
+parser.add_option("-c", "--config",
+                  action="store",  # optional because action defaults to "store"
+                  dest="config",
+                  default='LogSpider.yml',
+                  help=u"指定调试时的配置文件", )
 
 (options, args) = parser.parse_args()
 
 if __name__ == '__main__':
-    Configuration.init()
+    Configuration.init(options.config)
     DBMS.init()
     result = Finder(
         {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,

@@ -8,6 +8,7 @@ import sys
 import sqlite3
 import Configuration
 import os
+from pprint import pprint
 
 conn = None
 c = None
@@ -86,13 +87,16 @@ def related_mis_pos(path):
     c.execute(
         'SELECT b.path from postran a, mis_clt b where 1=1 and a.FileDate = b.FileDate and a.TermId = b.TermId and a.path="%s"' % (
             path))
-    return c.ferchall()
+    return c.fetchall()
 
 
-def search_mis_clt(time, pid):
+def search_mis_clt(pid, time):
     c.execute('select * from mis_clt where recv like  "%s" and pid > "%s" order by pid' % (time, pid))
-    print c.ferchall()
-    return c.ferchall()
+    aaa = c.fetchall()
+    if len(aaa) > 0:
+        return aaa[0]
+    else:
+        return None
 
 
 def search(command):
