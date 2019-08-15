@@ -5,33 +5,32 @@
 # @IDE: PyCharm
 
 import sys
+
 import DBMS
 import Configuration
-from pprint import pprint
 from optparse import OptionParser
 import Filter
 
 
-def WriteMsg(str):
-    sys.stderr.write(str + '\n')
+def write_msg(msg):
+    sys.stderr.write(msg + '\n')
     sys.stderr.flush()
 
 
-def Finder(d):
-    result = []
-    logType = Configuration.doc['input'][d['logType']]
-    if 'related' in logType:
+def finder(conditions):
+    log_type = Configuration.doc['input'][conditions['logType']]
+    if 'related' in log_type:
         pass
-    types = DBMS.getTable(d['logType'])
+    types = DBMS.getTable(conditions['logType'])
     for i in range(0, len(types)):
         types[i] = types[i][1]
 
     # 构造的命令由两部分组成：
     # 1.有占位符的sql查询语句
     # 2.括号内占位符所代表的变量名
-    command = 'SELECT * FROM ' + d['logType']
-    keys = list(d)
-    data = list(d.values())
+    command = 'SELECT * FROM ' + conditions['logType']
+    keys = list(conditions)
+    data = list(conditions.values())
 
     # 构造查询语句
     # 判断是否为第一个
@@ -55,9 +54,10 @@ def Finder(d):
         # 其他所有出现的特殊条件都用and作为前缀
         command += ' AND ' + keys[i] + " = '" + data[i] + "'"
 
-    WriteMsg(command)
+    write_msg(command)
 
     lists = DBMS.search(command)
+    result = []
     for item in lists:
         # 字典key和value匹配
         pack = dict(zip(types, item))
@@ -66,55 +66,55 @@ def Finder(d):
         if bbb:
             result.append(dict(zip(types, bbb)))
 
-    WriteMsg("NOTICE: Search complete, " + str(len(result)) + " eligible items")
+    write_msg("NOTICE: Search complete, " + str(len(result)) + " eligible items")
     return result
 
 
 # ---------------------------参数处理------------------------------
 
-parser = OptionParser(usage="usage: %prog [options] filename",
-                      version="%prog 1.0")
-parser.add_option("-t", "--type",
-                  action="store",
-                  dest="logType",
-                  default='postran',
-                  help=u"指定要查询日志的类型", )
-parser.add_option("-d", "--date",
-                  action="store",
-                  dest="FileDate",
-                  default=None,
-                  help=u"指定要查询日志的日期范围")
-parser.add_option("-r", "--rrn",
-                  action="store",  # optional because action defaults to "store"
-                  dest="rrn",
-                  default=None,
-                  help=u"指定要查询日志的Rrn", )
-parser.add_option("-a", "--amount",
-                  action="store",  # optional because action defaults to "store"
-                  dest="Amount",
-                  default=None,
-                  help=u"指定要查询日志的金额", )
-parser.add_option("-m", "--MrchId",
-                  action="store",  # optional because action defaults to "store"
-                  dest="MrchId",
-                  default=None,
-                  help=u"指定要查询日志的MrchId", )
-parser.add_option("-c", "--config",
-                  action="store",  # optional because action defaults to "store"
-                  dest="config",
-                  default='LogSpider.yml',
-                  help=u"指定调试时的配置文件", )
-
-(options, args) = parser.parse_args()
 
 if __name__ == '__main__':
-    Configuration.init(options.config)
+    parser = OptionParser(usage="usage: %prog [options] filename",
+                          version="%prog 1.0")
+    parser.add_option("-t", "--type",
+                      action="store",
+                      dest="logType",
+                      default='postran',
+                      help=u"指定要查询日志的类型", )
+    parser.add_option("-d", "--date",
+                      action="store",
+                      dest="FileDate",
+                      default=None,
+                      help=u"指定要查询日志的日期范围")
+    parser.add_option("-r", "--rrn",
+                      action="store",  # optional because action defaults to "store"
+                      dest="rrn",
+                      default=None,
+                      help=u"指定要查询日志的Rrn", )
+    parser.add_option("-a", "--amount",
+                      action="store",  # optional because action defaults to "store"
+                      dest="Amount",
+                      default=None,
+                      help=u"指定要查询日志的金额", )
+    parser.add_option("-m", "--MrchId",
+                      action="store",  # optional because action defaults to "store"
+                      dest="MrchId",
+                      default=None,
+                      help=u"指定要查询日志的MrchId", )
+    parser.add_option("-c", "--config",
+                      action="store",  # optional because action defaults to "store"
+                      dest="config",
+                      default='LogSpider.yml',
+                      help=u"指定调试时的配置文件", )
+
+    (options, args) = parser.parse_args()
+    Configuration.load(options.config)
     DBMS.init()
-    result = Finder(
+    finder_result = finder(
         {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,
          'MrchId': options.MrchId})
 
-    for item in result:
-        print(item["path"])
+    for f_item in finder_result:
+        print(f_item["path"])
 
-    Filter.Filter(result)
+    Filter.filter_by_call(finder_result)

@@ -6,28 +6,23 @@
 
 import sys
 import sqlite3
-import Configuration
 import os
-from pprint import pprint
 
 conn = None
 c = None
 
 
-def WriteMsg(str):
+def write_msg(str):
     sys.stderr.write(str + '\n')
 
-
-# 初始化数据库，创建并检查表
-def init():
-    if not os.path.isfile(str(Configuration.db_path)):
-        WriteMsg("ERROR: datebase " + str(Configuration.db_path) + " not found.")
+def create_table(db_path):
+    if not os.path.isfile(str(db_path)):
+        write_msg("ERROR: datebase " + str(db_path) + " not found.")
         exit()
     global conn, c
-    conn = sqlite3.connect(str(Configuration.db_path))
+    conn = sqlite3.connect(str(db_path))
     c = conn.cursor()
-    WriteMsg("NOTICE: Initialize database " + str(Configuration.db_path))
-
+    write_msg("NOTICE: Initialize database " + str(db_path))
     # 创建表
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
               'RespCode TEXT, CountNo TEXT, TermId TEXT, MrchId TEXT, TraceNo TEXT, Amount TEXT, SendToHost TEXT)')
@@ -40,6 +35,17 @@ def init():
               'respcode TEXT, countno TEXT, TermId TEXT, MrchId TEXT, traceno TEXT, amount TEXT, '
               'auth_code TEXT, orderid TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS qr_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT)')
+
+# 初始化数据库，创建并检查表
+def init(db_path):
+    if not os.path.isfile(str(db_path)):
+        write_msg("ERROR: datebase " + str(db_path) + " not found.")
+        exit()
+    global conn, c
+    conn = sqlite3.connect(str(db_path))
+    c = conn.cursor()
+    write_msg("NOTICE: Initialize database " + str(db_path))
+
 
 
 def drop_table():
@@ -63,15 +69,15 @@ def delet_old_data(logType, fileDate=None):
     c.execute('DELETE FROM %s WHERE FileDate = "%s"' % (logType, fileDate))
 
 
-def insert_dict_into_sql(logtype, dicts):
-    delet_old_data(logtype, dicts[1]["FileDate"])
+def insert_dict_into_sql(log_type, dicts):
+    delet_old_data(log_type, dicts[0]["FileDate"])
     for d in dicts:
         keys, values = zip(*d.items())
-        insert_str = "INSERT INTO %s (%s) values (%s)" % (logtype, ",".join(keys), ",".join(['?'] * len(keys)))
+        insert_str = "INSERT INTO %s (%s) values (%s)" % (log_type, ",".join(keys), ",".join(['?'] * len(keys)))
 
         c.execute(insert_str, values)
-    WriteMsg("NOTICE: for total " + str(
-        len(dicts)) + " files values has been added into table " + logtype + " in database.")
+    write_msg("NOTICE: for total " + str(
+        len(dicts)) + " files values has been added into table " + log_type + " in database.")
 
 
 def sign(fileDate, logType):
@@ -111,7 +117,7 @@ def logout():
     conn.commit()
     c.close()
     conn.close()
-    WriteMsg("NOTICE: logout database")
+    write_msg("NOTICE: logout database")
 
 
 def getTable(logType):

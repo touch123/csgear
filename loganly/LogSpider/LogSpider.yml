@@ -4,7 +4,6 @@ input:
   logtype:
     - mis_clt
     - postran
-        related: mis_clt
     - qrcodetran
     - qr_clt
     - hoteltran

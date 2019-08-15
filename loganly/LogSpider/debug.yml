@@ -1,6 +1,5 @@
 input:
-  path: 'D:/log/'
-
+  path: 'J:\work\开发维护\FJ.福建\泉州\泉州--浦西万达百货\Log\log20140804\'
   logtype:
     - mis_clt
     - postran
@@ -127,6 +126,7 @@ output:
       - '\*{10,}'
       - '^\[.*?- (.*?)\] : *$'
       - 'RawData=='
+      - 'Ext_Sale.cp'
 
   translation:
     re:

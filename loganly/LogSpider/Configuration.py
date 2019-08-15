@@ -26,7 +26,7 @@ def WriteMsg(str):
     sys.stderr.write(str+'\n')
 
 # 初始化关键词列表
-def init(fileName = 'LogSpider.yml'):
+def load(fileName ='LogSpider.yml'):
     WriteMsg("NOTICE: Initialize Configuration")
     global doc, logType, postran_key_words, qrcodetran_key_words, mis_clt_key_words, log_path, classified_path, db_path, finder, filters, translation
     try:
@@ -68,6 +68,6 @@ def self_check():
 
 
 if __name__ == '__main__':
-    init('debug.yml')
+    load('debug.yml')
     pprint(doc)
     self_check()
