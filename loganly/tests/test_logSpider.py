@@ -6,5 +6,7 @@ from LogSpider import Spider
 
 class TestSpider(TestCase):
     def test_LogSpider(self):
-        Configuration.init()
-        Spider(logType=Configuration.logType)
+	
+        Configuration.load("./LogSpider/debug.yml")
+        #Spider.spider(file_date="20170221",log_type=Configuration.logType)
+        Spider.spider(file_date="20170221",log_type=["postran"])

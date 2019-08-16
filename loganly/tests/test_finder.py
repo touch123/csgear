@@ -1,5 +1,7 @@
 from unittest import TestCase
-import Finder
+
+from LogSpider import Finder
+from LogSpider import Configuration
 
 
 class TestFinder(TestCase):
@@ -10,5 +12,6 @@ class TestFinder(TestCase):
         pass
 
     def test_Finder(self):
-        Finder.Finder({'logType': 'mis_clt', 'FileDate': '20190116', 'TraceNo': '540002'})
+        Configuration.load("./LogSpider/debug.yml")
+        Finder.finder({'logType': 'mis_clt', 'FileDate': '20190116', 'TraceNo': '540002'})
 

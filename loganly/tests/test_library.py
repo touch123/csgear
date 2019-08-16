@@ -1,43 +1,63 @@
-# -*- coding: utf-8 -*-
-
 from unittest import TestCase
 
-from Library import MrchId,get_num
+from LogSpider import Configuration
+from LogSpider import Library
 
 
 class TestLibrary(TestCase):
-
     def setUp(self):
         pass
 
-    def test_library(self):
-        txt1 = "[03:10:01 - 35546] : begin pack DE 4"  # postran格式测试
-        txt2 = "[03:10:01 - 32551] : connect MISP[172.18.18.3.5555] OK"  # mis格式测试
-        txt3 = "[04:00:26 - 19524] [MoveRecord.cp   - 4428]: moveRecord start at[20190420]"  # QRcode格式测试
-        txt4 = "01: 00 55 60 00 13 00 00 05 20 20 20 00 80 00 c1 00    [.U`.....   .....]"  # 报文头格式测试
-        txt5 = "06: 56 37 01 c1 84 89 f1                               [V7.....]"  # 报文尾格式测试
-        txt6 = "MrchId-[09:19:19 - 5893] : MrchId = [103421180620131]"  # MrchId格式测试
-        txt7 = 'MrchId-[09:19:19 - 5893] : AbcMrchId=[]'
-        txt8 = 'TermId-[09:19:19 - 5893] : AbcTermId=[]'
-        print(MrchId(txt6))
-        print(MrchId(txt7))
-        print(MrchId(txt8))
-        print(get_num(txt6))
-        print(get_num(txt7))
-        print(get_num(txt8))
+    def tearDown(self):
+        pass
 
-    def test_library2(self):
-        txt1 = "[03:10:01 - 35546] : begin pack DE 4"  # postran格式测试
-        txt2 = "[03:10:01 - 32551] : connect MISP[172.18.18.3.5555] OK"  # mis格式测试
-        txt3 = "[04:00:26 - 19524] [MoveRecord.cp   - 4428]: moveRecord start at[20190420]"  # QRcode格式测试
-        txt4 = "01: 00 55 60 00 13 00 00 05 20 20 20 00 80 00 c1 00    [.U`.....   .....]"  # 报文头格式测试
-        txt5 = "06: 56 37 01 c1 84 89 f1                               [V7.....]"  # 报文尾格式测试
-        txt6 = "MrchId-[09:19:19 - 5893] : MrchId = [103421180620131]"  # MrchId格式测试
-        txt7 = 'MrchId-[09:19:19 - 5893] : AbcMrchId=[]'
-        txt8 = 'TermId-[09:19:19 - 5893] : AbcTermId=[]'
-        print(MrchId(txt6))
-        print(MrchId(txt7))
-        print(MrchId(txt8))
-        print(get_num(txt6))
-        print(get_num(txt7))
-        print(get_num(txt8))
+    def test_n_ID(self):
+        self.assertIsInstance(Library.ID("[32322- (2342)]"),str)
+
+    def test_e_ID(self):
+        self.assertIsNone(Library.ID("xxxx"))
+
+    def test_n_message_head(self):
+        self.assertIsInstance(Library.message_head("01: "),str)
+
+    def test_e_message_head(self):
+        self.assertFalse(Library.message_head("xxxx"))
+
+    def test_n_message_tail(self):
+        self.assertIsInstance(Library.message_tail(" [xxx]"),str)
+
+    def test_e_message_tail(self):
+        self.assertFalse(Library.message_tail("xxxx"))
+
+    def test_n_get_num(self):
+        self.assertIsInstance(Library.get_num("  234 234 234 234 234"),str)
+
+    def test_e_get_num(self):
+        self.assertIsNone(Library.get_num("xxxx"))
+
+    def test_n_key_words_marching(self):
+        Configuration.load("./LogSpider/debug.yml")
+        self.assertTrue(Library.key_words_marching("Rrn"))
+
+    def test_e_key_words_marching(self):
+        Configuration.load("./LogSpider/debug.yml")
+        self.assertFalse(Library.key_words_marching("xxx"))
+
+    def test_n_DIYSearch(self):
+        self.assertTrue(Library.DIYSearch("(.*)","aaa"))
+
+    def test_e_DIYSearch(self):
+        self.assertIsNone(Library.DIYSearch(".*","aaa"))
+        self.assertIsNone(Library.DIYSearch("\d.*","ccc"))
+
+    def test_n_FileName(self):
+        self.assertTrue(Library.FileName("postran.20170101"))
+
+    def test_e_FileName(self):
+        self.assertIsNone(Library.FileName("70101223"))
+
+    def test_n_FileDate(self):
+        self.assertTrue(Library.FileDate("postran.20170101"))
+
+    def test_e_FileDate(self):
+        self.assertIsNone(Library.FileDate("aaaaaa"))

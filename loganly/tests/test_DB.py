@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 from unittest import TestCase
 
@@ -32,5 +33,5 @@ class TestDB(TestCase):
         DB.drop_table()
 
 	
-    def test_all(self):
+    def test_get_table(self):
 	DB.getTable('T_postran')
