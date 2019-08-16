@@ -8,7 +8,6 @@ import sys
 import yaml
 import codecs
 import os
-from pprint import pprint
 
 doc = None
 logType = None
@@ -27,6 +26,7 @@ def WriteMsg(str):
 
 # 初始化关键词列表
 def load(fileName ='LogSpider.yml'):
+    if not fileName: return False
     WriteMsg("NOTICE: Initialize Configuration")
     global doc, logType, postran_key_words, qrcodetran_key_words, mis_clt_key_words, log_path, classified_path, db_path, finder, filters, translation
     try:
@@ -45,29 +45,31 @@ def load(fileName ='LogSpider.yml'):
 
     except IOError:
         WriteMsg("ERROR: Configuration file not found.")
-        exit()
+        return False
 
-    self_check()
+    return self_check()
 
 
 # 获取指定值的正则表达式
 def get_re(type):
-    return doc['input'][type]['re']
+    if not type: return ''
+    if doc['input'].get(type,None):
+        return doc['input'][type]['re']
+    else:
+        return {}
 
 
 # 配置文件自检
 def self_check():
     if not os.path.isdir(log_path):
         WriteMsg("ERROR: log path's " + log_path + " doesn't exist.")
-        exit()
+        return False
     if not os.path.isdir(classified_path):
         WriteMsg("WARNING: classified log's path " + classified_path + " doesn't exist.")
     if not os.path.isfile(db_path):
         WriteMsg('ERROR: database path ' + db_path + "doesn't exist.")
-        exit()
+        return False
+
+    return True
 
 
-if __name__ == '__main__':
-    load('debug.yml')
-    pprint(doc)
-    self_check()

@@ -7,9 +7,6 @@ import re
 import Configuration
 import os
 
-postran_key_words = Configuration.postran_key_words
-qrcodetran_key_words = Configuration.qrcodetran_key_words
-
 
 # 识别程序PID
 def ID(txt):
@@ -23,6 +20,9 @@ def ID(txt):
 
 # 识别十六进制报文
 def message_head(txt):
+    ''' 
+    TODO: 失败返回值要统一用None 还是False
+    '''
     re1 = '^(\\d+): '  # Integer Number 1
     rg = re.compile(re1, re.IGNORECASE | re.DOTALL)
     m = rg.search(txt)
@@ -72,9 +72,10 @@ def get_num(txt):
 
 # 预处理，整理好json格式入库
 def key_words_marching(txt):  # 识别key_words列表
-    for item in postran_key_words:
+    for item in Configuration.postran_key_words:
         if item in txt:
-            pass
+            return True
+    return False
 
 
 # 自定义规则的正则搜索
@@ -82,7 +83,7 @@ def DIYSearch(rule, txt):
     # 忽略大小写模糊搜索
     rg = re.compile(rule, re.IGNORECASE | re.DOTALL)
     m = rg.search(txt)
-    if m:
+    if m and len(m.groups()) > 0:
         result = m.group(1)
         return result
     else:
@@ -90,6 +91,9 @@ def DIYSearch(rule, txt):
 
 
 def FileDate(txt):
+    ''' 
+    TODO:  正则不准确
+    '''
     re1 = '.*?'  # Non-greedy match on filler
     re2 = '((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3}))(?:[0]?[1-9]|[1][012])(?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])'  # YYYYMMDD 1
 
@@ -103,11 +107,14 @@ def FileDate(txt):
 
 
 def FileName(txt):
+    ''' 
+    TODO:  正则不准确
+    '''
     re1 = '.*?'  # Non-greedy match on filler
     re2 = '((?:[a-z][a-z]+))'  # Word 1
     rg = re.compile(re1 + re2, re.IGNORECASE | re.DOTALL)
     m = rg.search(txt)
-    if m:
+    if m and len(m.groups())>0:
         word1 = m.group(1)
         return word1
     else:
@@ -123,6 +130,3 @@ def file_name(user_dir):
     return file_list
 
 
-if __name__ == '__main__':
-    print re.search(r'^\[(.*?) - \d*\] : SendToHost to mis_clt',
-                    '''[03:10:01 - 3546] : SendToHost to mis_clt ....''').group(1)

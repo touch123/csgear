@@ -18,6 +18,8 @@ def write_msg(msg):
 
 
 def finder(conditions):
+    DBMS.connect(Configuration.db_path)
+
     log_type = Configuration.doc['input'][conditions['logType']]
     if 'related' in log_type:
         pass
@@ -58,15 +60,19 @@ def finder(conditions):
 
     lists = DBMS.search(command)
     result = []
+
     for item in lists:
         # 字典key和value匹配
         pack = dict(zip(types, item))
         result.append(pack)
-        bbb = DBMS.search_mis_clt(pack["pid"], pack["SendToHost"])
+        bbb = DBMS.search_mis_clt(pack["pid"], pack.get("SendToHost",""))
         if bbb:
             result.append(dict(zip(types, bbb)))
 
     write_msg("NOTICE: Search complete, " + str(len(result)) + " eligible items")
+    DBMS.disconnect()
+
+
     return result
 
 
@@ -109,7 +115,6 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
     Configuration.load(options.config)
-    DBMS.init()
     finder_result = finder(
         {'logType': options.logType, 'FileDate': options.FileDate, 'rrn': options.rrn, 'amount': options.Amount,
          'MrchId': options.MrchId})

@@ -16,12 +16,14 @@ def write_msg(str):
     sys.stderr.write(str + '\n')
 
 def create_table(db_path):
+    if not db_path: os._exit(-1)
     if not os.path.isfile(str(db_path)):
         write_msg("ERROR: datebase " + str(db_path) + " not found.")
-        exit()
+        os._exit(-1)
     global conn, c
     conn = sqlite3.connect(str(db_path))
     c = conn.cursor()
+
     write_msg("NOTICE: Initialize database " + str(db_path))
     # 创建表
     c.execute('CREATE TABLE IF NOT EXISTS postran (pid TEXT, FileDate TEXT, path TEXT,Rrn TEXT, '
@@ -37,14 +39,16 @@ def create_table(db_path):
     c.execute('CREATE TABLE IF NOT EXISTS qr_clt (pid TEXT, FileDate TEXT, path TEXT, TraceNo TEXT)')
 
 # 初始化数据库，创建并检查表
-def init(db_path):
+def connect(db_path):
+    if not db_path: return False
     if not os.path.isfile(str(db_path)):
         write_msg("ERROR: datebase " + str(db_path) + " not found.")
-        exit()
+        return False
     global conn, c
     conn = sqlite3.connect(str(db_path))
     c = conn.cursor()
     write_msg("NOTICE: Initialize database " + str(db_path))
+    return True
 
 
 
@@ -113,10 +117,14 @@ def search(command):
     return result
 
 
-def logout():
-    conn.commit()
-    c.close()
-    conn.close()
+def disconnect():
+
+    if c:
+        c.close()
+
+    if conn: 
+        conn.commit()
+        conn.close()
     write_msg("NOTICE: logout database")
 
 
@@ -125,6 +133,3 @@ def getTable(logType):
     return c.fetchall()
 
 
-if __name__ == '__main__':
-    init()
-    logout()

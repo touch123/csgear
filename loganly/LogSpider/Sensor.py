@@ -4,8 +4,8 @@
 # @FileName: Sensor.py
 # @IDE: PyCharm
 
-import Configuration
 import os
+import Configuration
 import DBMS
 
 
@@ -14,6 +14,8 @@ def sensor(file_date=None):
     根据fileDate 检测系统中指定配置目录下的日志文件
     如fileDate 为None,则检测所有文件
     """
+    if not DBMS.connect(Configuration.db_path):
+        return False
     for item in file_names(Configuration.log_path):
         portion = os.path.splitext(item)
 
@@ -29,9 +31,13 @@ def sensor(file_date=None):
                 continue
             DBMS.insert_dict_into_sql('sign', [{'logType': portion[0], 'FileDate': portion[1].replace('.', ""), 'Status': False}])
 
+    DBMS.disconnect()
+    return True
+
 
 # 遍历文件下下的文件名
 def file_names(user_dir=Configuration.log_path):
+    if not user_dir : return []
     file_list = list()
     for root, dirs, files in os.walk(user_dir):
         for log_file in files:
@@ -42,6 +48,4 @@ def file_names(user_dir=Configuration.log_path):
 
 if __name__ == '__main__':
     Configuration.load('debug.yml')
-    DBMS.init()
     sensor()
-    DBMS.logout()

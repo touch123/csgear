@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time : 2019/7/24 16:28
 # @Author : Max
@@ -43,7 +44,7 @@ def parse_search_string(input_string):
 #aa(u"651232*******2234 20180101 123456789012 12345678901234567890123456789012 123456.78 12MIS001 103050512342342 终端未签到")
 #exit(0)
 
-if __name__ == '__main__':
+def main():
     parser = OptionParser(usage="usage: %prog [options] ",
                           version="%prog 1.0")
 
@@ -66,8 +67,8 @@ if __name__ == '__main__':
 
     Configuration.load('debug.yml')
     DBMS.create_table(Configuration.db_path)
-    Sensor.sensor('20140715')
-    Spider.spider(file_date='20140715', log_type='postran')
+    Sensor.sensor('20170225')
+    Spider.spider(file_date='20170225', log_type='postran')
 
     conditions = parse_search_string(options.search_string)
 
@@ -78,5 +79,8 @@ if __name__ == '__main__':
     #                               'MrchId': ''})
 
     Filter.filter_by_call(finder_result)
+
+if __name__ == '__main__':
+    main()
 
 

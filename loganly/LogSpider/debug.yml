@@ -1,5 +1,5 @@
 input:
-  path: 'J:\work\开发维护\FJ.福建\泉州\泉州--浦西万达百货\Log\log20140804\'
+  path: '/home/vagrant/shop/log/'
   logtype:
     - mis_clt
     - postran
@@ -102,9 +102,9 @@ input:
     re:
 
 output:
-  path:  'D:/classified_log/'
-  dbpath: 'identifier.sqlite'
-  finder: 'D:/output'
+  path:  '/home/vagrant/runtime/classified_log/'
+  dbpath: 'data/identifier.sqlite'
+  finder: '/home/vagrant/runtime/output'
 
   filter:
     re:

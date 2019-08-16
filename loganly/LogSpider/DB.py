@@ -207,6 +207,3 @@ def getTable(logType):
     return aa.fetchall()
 
 
-if __name__ == '__main__':
-    # init()
-    # logout()

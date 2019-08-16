@@ -5,19 +5,29 @@
 # @IDE: PyCharm
 
 import os
-import unpacking
-import Dealer
-import DBMS
 from optparse import OptionParser
 import datetime
 
 import Configuration
+import DBMS
+import unpacking_general
+import Dealer
 
 
 def spider(file_date=None, log_type=Configuration.logType):
+    '''
+    TODO: 用Configuration.logType 作参数不合适
+    '''
+
+    if not DBMS.connect(Configuration.db_path): return False
     # 将文件名拆成名字和后缀
     file_list = []
-    if type(log_type) == str:
+
+
+    if isinstance(log_type,str) :
+        print(log_type,Configuration.logType)
+        if log_type not in Configuration.logType:
+            return False
         log_type = [log_type]
 
     for t in log_type:
@@ -33,13 +43,15 @@ def spider(file_date=None, log_type=Configuration.logType):
     for name in file_list:
         if name[0] in Configuration.doc['input'] and 'type' in Configuration.doc['input'][name[0]]:
             if name[0] == 'mis_clt':
-                result = unpacking.classifying_mis("".join(tuple(name)))
+                result = unpacking_general.classifying_mis("".join(tuple(name)))
         else:
-            result = unpacking.classifying("".join(tuple(name)))
+            result = unpacking_general.classifying("".join(tuple(name)))
 
         # 可以返回json或则入库
         DBMS.delete_table(name[0])
         DBMS.insert_dict_into_sql(name[0], result)
+    DBMS.disconnect()
+    return True
 
 
 # 遍历文件下下的文件名
@@ -54,7 +66,9 @@ def file_names(user_dir):
 
 
 # 获取前1天或N天的日期，beforeOfDay=1：前1天；beforeOfDay=N：前N天
-def getdate(before_of_day):
+def getdate(before_of_day=1):
+    if not isinstance(before_of_day, int): return datetime.datetime.now().strftime('%Y%m%d')
+
     today = datetime.datetime.now()
     # 计算偏移量
     offset = datetime.timedelta(days=-before_of_day)
@@ -84,8 +98,6 @@ if __name__ == '__main__':
                       help=u"指定Spider处理的日志的类型", )
     (options, args) = parser.parse_args()
     Configuration.load(options.config)
-    DBMS.init()
     spider(file_date=options.FileDate, log_type=options.LogType)
-    DBMS.logout()
 
 
