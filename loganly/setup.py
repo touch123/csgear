@@ -6,7 +6,7 @@ setup(
     version='1.0',
     packages=['LogSpider'],
     install_requires=[
-        'PyYAML==5.1.2',
+        'PyYAML==5.4',
         'SQLAlchemy==1.3.7',
     ],
     package_data = {'LogSpider': ["README.md","LogSpider.yml","debug.yml"]},
